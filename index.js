@@ -38,6 +38,8 @@ const tableReset = () => {
             <th>Public Repos</th>
             <th>Hirable</th>
             <th>Followers</th>
+            <th>See User Page</th>
+            <th>Favorite</th>
         </tr>
     </table>
     `
@@ -57,10 +59,6 @@ const gitUserSearch = (value) => {
         })
     })
 }
-    /*
-        This api is organized as an Array of Objects
-        To get a count of commits you will need to dive into each object a pull out the [type] that === "PushEvent"
-    */
 
 //---------- Fetch from Github API for single Github User ----------//
 const singleUser = (gitUser) => {
@@ -76,14 +74,16 @@ const singleUser = (gitUser) => {
         const publicRepos = gitUser.public_repos
         const hireable = gitUser.hireable
         const followers = gitUser.followers
-        const following = gitUser.following   
+        const following = gitUser.following
         const bio = gitUser.bio 
-        const gitLink = gitUser.html_url //-for actual site url
+        const siteAdmin = gituser.site_admin
+        const githubId = gituser.id
 
         tableCreation(image, username, location, publicRepos, hireable, followers)
+        something(image, username, location, publicRepos, hireable, followers, following, bio, siteAdmin, githubId)
     })
 }
-//---------- Git User Search Table appends [6 columns] ----------//
+//---------- Git User Search Table appends [8 columns] ----------//
 const tableCreation = (image, username, location, publicRepos, hireable, followers) => {
     const tr = document.createElement('tr')
 
@@ -114,14 +114,37 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     td6.textContent = followers
     tr.append(td6)
 
+    const td7 = document.createElement('td')
+    const userBtn = document.createElement('button')
+    userBtn.textContent = 'Show Me'
+    userBtn.classList = 'button'
+    userBtn.id = 'UserButton'
+    td7.append(userBtn)
+    tr.append(td7)
+
+    const td8 = document.createElement('td')
+    const favoriteBtn = document.createElement('button')
+    favoriteBtn.textContent = 'Favorite'
+    favoriteBtn.classList = 'button'
+    favoriteBtn.id = 'FavoriteButton'
+    td8.append(favoriteBtn)
+    tr.append(td8)
+
     gitUserTable.append(tr)
     
 }
 
 
 //---------- Event Listener on Github User Table to add that user to the BackEnd ----------//
+const something = (image, username, location, publicRepos, hireable, followers, following, bio) => {
+    gitUserTable.addEventListener('click', event =>{
+        if (event.target.matches('#UserButton')){
+            userBoard.hidden = true
+            console.log('clicked')
 
-
+        }
+    })
+}
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
 const singleUserRepo = (reposUrl) => {
     fetch(reposUrl)
