@@ -59,6 +59,11 @@ const gitUserSearch = (value) => {
                 .forks_count
 
             */
+        /* We will also need to fetch from [events_url] which is located inside of [repos_url] in order to get the "PushEvent" aka commits */
+            /*
+                This api is organized as an Array of Objects
+                To get a count of commits you will need to dive into each object a pull out the [type] that === "PushEvent"
+            */
         // gitUsers.items.forEach(gitUser => {
         //     console.log(gitUser)
         // })
