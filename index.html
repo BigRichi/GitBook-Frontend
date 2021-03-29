@@ -13,12 +13,23 @@
 <body>
     <h1>GitBook</h1>
     <div>
-        <input id="search-bar" type="search" dir="auto" placeholder="Search GitHub Username">
+        <form id="search-form" type="search" dir="auto">
+            <label for="username"></label>
+            <input type="search" name="username" placeholder="Search GitHub Username">
+            <input type="submit" value="search">
+        </form>
     </div>
-    <div id="searched-github-users" class="outerDiv">
-       <ul id="github-user-list">
-
-       </ul>
+    <div id="searched-github-users" class="outerDiv" hidden>
+       <table id="github-user-table" style="width:100%">
+            <tr>
+                <th>Picture</th>
+                <th>Username</th>
+                <th>Location</th>
+                <th>Public Repos</th>
+                <th>Hirable</th>
+                <th>Followers</th>
+            </tr>
+       </table>
     </div>
     
     <div id="dashboard" class="outerDiv">
