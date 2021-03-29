@@ -25,11 +25,11 @@ searchBar.addEventListener('keyup', event =>{
     }
 })
 
-//---------- Fetch from GitHub API for Search Bar ----------//
+//---------- Fetch from Github API for Search Bar ----------//
 
 const gitUserSearch = (value) => {
-    // fetch("https://api.github.com/users/BigRichi") /* [url]*/
-    fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
+    fetch("https://api.github.com/users/BigRichi") /* [url]*/
+    // fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
     // fetch(`${githubSearchUrl}${value}`)
     .then(response => response.json())
     .then(gitUsers => {
@@ -65,8 +65,48 @@ const gitUserSearch = (value) => {
                 To get a count of commits you will need to dive into each object a pull out the [type] that === "PushEvent"
             */
         // gitUsers.items.forEach(gitUser => {
-        //     console.log(gitUser)
+            // singleUser(gitUser)    
+            // console.log(gitUser)
         // })
+    })
+}
 
+//---------- Fetch from Github API for single Github User ----------//
+const singleUser = (value) => {
+    const userUrl = value.url
+
+    fetch(userUrl)
+    .then(response => response.json())
+    .then(gitUser => {
+        const username = gitUser.login //-for username
+        const image = gitUser.avatar_url //-for Image
+        const gitLink = gitUser.html_url //-for actual site url
+        const location = gitUser.location
+        const bio = gitUser.bio 
+        const publicRepos = gitUser.public_repos
+        const hirable = gitUser.hireable
+        const followers = gitUser.followers
+        const following = gitUser.following
+    })
+}
+
+//---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
+const singleUserRepo = (value) => {
+    const reposUrl = value.repos_url
+
+    fetch(reposUrl)
+    .then(response => response.json())
+    .then(userRepos => {
+        userRepos.forEach(userRepo => {
+            const name = userRepo.name
+            const repoLink = userRepo.html_url
+            const description = userRepo.description
+            const size = userRepo.size
+            const language = userRepo.language
+            const watchersCount = userRepo.watchers_count
+            const stargazersCount = userRepo.stargazers_count
+            const forksCount = userRepo.forks_count
+        })
+        
     })
 }
