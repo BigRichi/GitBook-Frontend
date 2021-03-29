@@ -28,52 +28,28 @@ searchBar.addEventListener('keyup', event =>{
 //---------- Fetch from Github API for Search Bar ----------//
 
 const gitUserSearch = (value) => {
-    fetch("https://api.github.com/users/BigRichi") /* [url]*/
+    // fetch("https://api.github.com/users/BigRichi") /* [url]*/
     // fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
-    // fetch(`${githubSearchUrl}${value}`)
+    fetch(`${githubSearchUrl}${value}`)
     .then(response => response.json())
     .then(gitUsers => {
-        console.clear
         console.log(gitUsers)
-        /* We will need to fetch from [url] to get the user information */
-            /*
-                .login //-for username
-                .avatar_url //-for Image
-                .html_url //-for actual site url
-                .location
-                .bio 
-                .public_repos
-                .hireable
-                .followers
-                .following
-            */ 
-        /* We will also need to fetch from [repos_url] to get the repo information */
-            /*
-                .name
-                .html_url
-                .description
-                .size
-                .language
-                .watchers_count
-                .stargazers_count
-                .forks_count
-
-            */
-        /* We will also need to fetch from [events_url] which is located inside of [repos_url] in order to get the "PushEvent" aka commits */
-            /*
-                This api is organized as an Array of Objects
-                To get a count of commits you will need to dive into each object a pull out the [type] that === "PushEvent"
-            */
-        // gitUsers.items.forEach(gitUser => {
-            // singleUser(gitUser)    
-            // console.log(gitUser)
-        // })
+        singleUser(gitUsers)
+        gitUsers.items.forEach(gitUser => {
+            singleUser(gitUser)    
+            console.log(gitUser)
+        })
     })
 }
+    /*
+        This api is organized as an Array of Objects
+        To get a count of commits you will need to dive into each object a pull out the [type] that === "PushEvent"
+    */
 
 //---------- Fetch from Github API for single Github User ----------//
-const singleUser = (value) => {
-    const userUrl = value.url
+const singleUser = (gitUser) => {
+    const userUrl = gitUser.url
+    const reposUrl = gitUser.repos_url
 
     fetch(userUrl)
     .then(response => response.json())
@@ -86,27 +62,38 @@ const singleUser = (value) => {
         const publicRepos = gitUser.public_repos
         const hirable = gitUser.hireable
         const followers = gitUser.followers
-        const following = gitUser.following
+        const following = gitUser.following   
     })
 }
 
-//---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
-const singleUserRepo = (value) => {
-    const reposUrl = value.repos_url
 
+//---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
+const singleUserRepo = (reposUrl) => {
     fetch(reposUrl)
     .then(response => response.json())
     .then(userRepos => {
         userRepos.forEach(userRepo => {
-            const name = userRepo.name
-            const repoLink = userRepo.html_url
-            const description = userRepo.description
-            const size = userRepo.size
-            const language = userRepo.language
-            const watchersCount = userRepo.watchers_count
-            const stargazersCount = userRepo.stargazers_count
-            const forksCount = userRepo.forks_count
-        })
-        
+            const repoEventUrl = userRepo.events_url
+            console.log(repoEventUrl)
+            // const name = userRepo.name
+            // const repoLink = userRepo.html_url
+            // const description = userRepo.description
+            // const size = userRepo.size
+            // const language = userRepo.language
+            // const watchersCount = userRepo.watchers_count
+            // const stargazersCount = userRepo.stargazers_count
+            // const forksCount = userRepo.forks_count 
+            repoEvent(repoEventUrl)          
+        })    
     })
+}
+
+const repoEvent = (repoEventUrl) => {
+    fetch(repoEventUrl)
+    .then(response => response.json())
+    .then(repoEvents =>{
+        console.log(repoEvents)
+
+
+    })  
 }
