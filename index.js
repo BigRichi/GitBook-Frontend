@@ -1,13 +1,16 @@
 //---------- Global Variables ----------//
-const userBoard = document.querySelector('#searched-github-users')
+const userSearchTable = document.querySelector('#searched-github-users')
 
 const searchForm = document.querySelector('#search-form')
 const gitUserTable = document.querySelector('#github-user-table')
+const gitUserDashboard = document.querySelector('#dashboard')
 
+//---------- Url(s) ----------//
+const githubUserUrl = "http://localhost:3000/git_users"
 //---------- API(s) ----------//
 
-const githubSearchUrl = "https://api.github.com/search/users?q="
-const githubUserUrl = "https://api.github.com/users/"
+const githubSearchApi = "https://api.github.com/search/users?q="
+const githubUserApi = "https://api.github.com/users/"
 
 //---------- Search Bar Event Listener ----------//
 searchForm.addEventListener('submit', event =>{
@@ -16,16 +19,31 @@ searchForm.addEventListener('submit', event =>{
 
     if (searchValue === ""){
         //In essance this if will change the between the dashboard and the search div
-        userBoard.hidden = true
+        userSearchTable.hidden = true
         gitUserTable.innerHTML = ""
     }
     else {
         //I will add table head and table body to this if
         tableReset()
-        userBoard.hidden = false
+        userSearchTable.hidden = false
         gitUserSearch(searchValue)
     }
 })
+
+//---------- Fetch from Github API for Search Bar ----------//
+
+const gitUserSearch = (value) => {
+    // fetch("https://api.github.com/users/BigRichi") /* [url]*/
+    // fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
+    fetch(`${githubSearchApi}${value}`)
+    .then(response => response.json())
+    .then(gitUsers => {
+        gitUsers.items.forEach(gitUser => {
+            singleUser(gitUser)    
+            // console.log(gitUser)
+        })
+    })
+}
 
 //---------- GitUser Table Reset ----------//
 const tableReset = () => {
@@ -45,20 +63,39 @@ const tableReset = () => {
     `
 }
 
-//---------- Fetch from Github API for Search Bar ----------//
-
-const gitUserSearch = (value) => {
-    // fetch("https://api.github.com/users/BigRichi") /* [url]*/
-    // fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
-    fetch(`${githubSearchUrl}${value}`)
+/*//---------- Search Results Fetch ----------//
+const searchResult = () => {
+    fetch(userUrl)
     .then(response => response.json())
-    .then(gitUsers => {
-        gitUsers.items.forEach(gitUser => {
-            singleUser(gitUser)    
-            console.log(gitUser)
-        })
+    .then(gitUser => {
+        const githubId = gitUser.id
+        const username = gitUser.login //-for username
+        const name = gitUser.name
+        const image = gitUser.avatar_url //-for Image
+        const bio = gitUser.bio 
+        const location = gitUser.location
+        const siteAdmin = gitUser.site_admin
+        const hireable = gitUser.hireable
+        const publicRepos = gitUser.public_repos
+        const followers = gitUser.followers
+        const following = gitUser.following
+
+        globalThis.newGitUser = {
+            githubId: gitUser.id,
+            username: gitUser.login, //-for username
+            name: gitUser.name,
+            image: gitUser.avatar_url, //-for Image
+            bio: gitUser.bio, 
+            location: gitUser.location,
+            siteAdmin: gitUser.site_admin,
+            hireable: gitUser.hireable,
+            publicRepos: gitUser.public_repos,
+            followers: gitUser.followers,
+            following: gitUser.following
+        }
     })
 }
+*/
 
 //---------- Fetch from Github API for single Github User ----------//
 const singleUser = (gitUser) => {
@@ -68,19 +105,20 @@ const singleUser = (gitUser) => {
     fetch(userUrl)
     .then(response => response.json())
     .then(gitUser => {
-        const image = gitUser.avatar_url //-for Image
+        const githubId = gitUser.id
         const username = gitUser.login //-for username
+        const name = gitUser.name
+        const image = gitUser.avatar_url //-for Image
+        const bio = gitUser.bio 
         const location = gitUser.location
-        const publicRepos = gitUser.public_repos
+        const siteAdmin = gitUser.site_admin
         const hireable = gitUser.hireable
+        const publicRepos = gitUser.public_repos
         const followers = gitUser.followers
         const following = gitUser.following
-        const bio = gitUser.bio 
-        const siteAdmin = gituser.site_admin
-        const githubId = gituser.id
 
         tableCreation(image, username, location, publicRepos, hireable, followers)
-        something(image, username, location, publicRepos, hireable, followers, following, bio, siteAdmin, githubId)
+        // userDashboard(githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following)
     })
 }
 //---------- Git User Search Table appends [8 columns] ----------//
@@ -119,6 +157,7 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     userBtn.textContent = 'Show Me'
     userBtn.classList = 'button'
     userBtn.id = 'UserButton'
+    userBtn.dataset.id = username
     td7.append(userBtn)
     tr.append(td7)
 
@@ -127,6 +166,7 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     favoriteBtn.textContent = 'Favorite'
     favoriteBtn.classList = 'button'
     favoriteBtn.id = 'FavoriteButton'
+    userBtn.dataset.id = username
     td8.append(favoriteBtn)
     tr.append(td8)
 
@@ -136,15 +176,44 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
 
 
 //---------- Event Listener on Github User Table to add that user to the BackEnd ----------//
-const something = (image, username, location, publicRepos, hireable, followers, following, bio) => {
-    gitUserTable.addEventListener('click', event =>{
-        if (event.target.matches('#UserButton')){
-            userBoard.hidden = true
-            console.log('clicked')
-
-        }
-    })
-}
+// const userDashboard = (githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following) => {
+gitUserTable.addEventListener('click', event =>{
+    if (event.target.matches('#UserButton')){
+        const id = event.target.dataset.id
+        userSearchTable.hidden = true
+        gitUserDashboard.hidden = false
+        
+        fetch(`${githubUserApi}${id}`)
+        .then(response => response.json())
+        .then(gitUser => {        
+            const newGitUser = {
+                github_id: gitUser.id,
+                login: gitUser.login, //-for username
+                name: gitUser.name,
+                avatar_url: gitUser.avatar_url, //-for Image
+                bio: gitUser.bio, 
+                location: gitUser.location,
+                site_admin: gitUser.site_admin,
+                hireable: gitUser.hireable,
+                public_repos: gitUser.public_repos,
+                followers: gitUser.followers,
+                following: gitUser.following
+            }
+            fetch(githubUserUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newGitUser)
+            })
+            .then(response => response.json())
+            .then(newGitUser => {
+                console.log(newGitUser)
+            })
+        })
+    }
+})
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
 const singleUserRepo = (reposUrl) => {
     fetch(reposUrl)

@@ -12,6 +12,19 @@
 
 <body>
     <h1>GitBook</h1>
+    <div id="account-creation">
+        <form id="create-form" dir="auto">
+            <label for="firstName"></label>
+            <input type="text" name="username" placeholder="First Name">
+            <label for="lastName"></label>
+            <input type="text" name="username" placeholder="last Name">
+            <label for="userName"></label>
+            <input type="text" name="username" placeholder="User Name">
+            <label for="location"></label>
+            <input type="text" name="username" placeholder="location">
+            <input type="submit" value="search">
+        </form>
+    </div>
     <div>
         <form id="search-form" type="search" dir="auto">
             <label for="username"></label>
@@ -34,12 +47,14 @@
        </table>
     </div>
     
-    <div id="dashboard" class="outerDiv">
-        <div id="image-div">
+    <div id="dashboard" class="outerDiv" hidden>
+        <div id="profile-info">
             <img src="" alt="">
-        </div>
-        <div>
-            
+            <h2>[Github User Username]</h2>
+            <h3>[Github User Name]</h3>
+            <h4>[Location]</h4>
+            <p>Looking for a job [hireable]</p>
+            </div>
         </div>
     </div>
 </body>
