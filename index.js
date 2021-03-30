@@ -63,7 +63,7 @@ const tableReset = () => {
     `
 }
 
-/*//---------- Search Results Fetch ----------//
+/*//---------- Search Results Fetch ----------// trying to figure out how to put a gituser into an fetch function
 const searchResult = () => {
     fetch(userUrl)
     .then(response => response.json())
@@ -161,14 +161,14 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     td7.append(userBtn)
     tr.append(td7)
 
-    const td8 = document.createElement('td')
-    const favoriteBtn = document.createElement('button')
-    favoriteBtn.textContent = 'Favorite'
-    favoriteBtn.classList = 'button'
-    favoriteBtn.id = 'FavoriteButton'
-    userBtn.dataset.id = username
-    td8.append(favoriteBtn)
-    tr.append(td8)
+    // const td8 = document.createElement('td') Move to Dashboard
+    // const favoriteBtn = document.createElement('button')
+    // favoriteBtn.textContent = 'Favorite'
+    // favoriteBtn.classList = 'button'
+    // favoriteBtn.id = 'FavoriteButton'
+    // userBtn.dataset.id = username
+    // td8.append(favoriteBtn)
+    // tr.append(td8)
 
     gitUserTable.append(tr)
     
@@ -212,6 +212,9 @@ gitUserTable.addEventListener('click', event =>{
                 console.log(newGitUser)
             })
         })
+    }
+    else if (event.target.matches('#FavoriteButton')){
+        console.log('click')
     }
 })
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
