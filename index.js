@@ -32,6 +32,7 @@ loginForm.addEventListener('submit', event => {
     .then(response => response.json())
     .then(client => {
         gitUserDashboard.dataset.id = client.id
+
     })
 })
 
