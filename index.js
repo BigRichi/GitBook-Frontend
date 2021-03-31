@@ -1,16 +1,64 @@
 //---------- Global Variables ----------//
 const userSearchTable = document.querySelector('#searched-github-users')
 
+
+const title = document.querySelector('#body > h1')
+const loginForm = document.querySelector('#login-form')
+const createForm = document.querySelector('#create-form')
 const searchForm = document.querySelector('#search-form')
 const gitUserTable = document.querySelector('#github-user-table')
 const gitUserDashboard = document.querySelector('#dashboard')
+const favoriteButton = document.querySelector('#FavoriteButton')
+const profile = gitUserDashboard.querySelector('#profile-info')
+
 
 //---------- Url(s) ----------//
 const githubUserUrl = "http://localhost:3000/git_users"
+const clientsUrl = "http://localhost:3000/clients"
+const gitUserClients = "http://localhost:3000/git_user_clients"
+
 //---------- API(s) ----------//
 
 const githubSearchApi = "https://api.github.com/search/users?q="
 const githubUserApi = "https://api.github.com/users/"
+
+//---------- Login Form Event Listener ----------//
+
+loginForm.addEventListener('submit', event => {
+    event.preventDefault()
+    const userName = event.target.username.value
+
+    fetch(`${clientsUrl}/${userName}`)
+    .then(response => response.json())
+    .then(client => {
+        gitUserDashboard.dataset.id = client.id
+    })
+})
+
+//---------- Create Form Event Listener ----------//
+
+createForm.addEventListener('submit', event => {
+    event.preventDefault()
+    const newClient = {
+        first_name: createForm.firstName.value,
+        last_name: createForm.lastName.value,
+        location: createForm.location.value,
+        username: createForm.userName.value
+    }
+
+    fetch(clientsUrl,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(newClient)
+    })
+    .then(response => response.json())
+    .then(client => {
+        console.log(client)
+    })
+})
 
 //---------- Search Bar Event Listener ----------//
 searchForm.addEventListener('submit', event =>{
@@ -209,6 +257,7 @@ gitUserTable.addEventListener('click', event =>{
             })
             .then(response => response.json())
             .then(newGitUser => {
+                renderDashboard(newGitUser)
                 console.log(newGitUser)
             })
         })
@@ -217,6 +266,46 @@ gitUserTable.addEventListener('click', event =>{
         console.log('click')
     }
 })
+
+//---------- Render Dashboard ----------// 
+renderDashboard = (newGitUser) => {
+    const img = gitUserDashboard.querySelector('#profile-info > img')
+    const userName = gitUserDashboard.querySelector('#profile-info > h2')
+    const name = gitUserDashboard.querySelector('#profile-info > h3')
+    const location = gitUserDashboard.querySelector('#profile-info > h4')
+    const hireable = gitUserDashboard.querySelector('#profile-info > p')
+    
+
+    img.src = newGitUser.avatar_url
+    userName.textContent = newGitUser.login
+    name.textContent = newGitUser.name
+    location.textContent = newGitUser.location
+    hireable.textContent = newGitUser.hireable
+    profile.dataset.id = newGitUser.id
+
+}
+
+//---------- Event Listener on Fav button ----------// 
+favoriteButton.addEventListener('click', event => {
+    const newGitUserClient = {
+        client_id: gitUserDashboard.dataset.id,
+        git_user_id: profile.dataset.id
+    }
+
+    fetch(gitUserClients,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(newGitUserClient)
+    })
+    .then(response => response.json())
+    .then(gitUserClient => {
+        console.log(gitUserClient)
+    })
+})
+
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
 const singleUserRepo = (reposUrl) => {
     fetch(reposUrl)
