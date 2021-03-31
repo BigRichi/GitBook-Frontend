@@ -18,8 +18,10 @@
             <input type="text" name="username" placeholder="User Name">
             <input type="submit" value="Login In">
         </form>
+        <button id="create-button">Sign Up</button>
     </div>
-    <div id="account-creation">
+
+    <div id="account-creation" hidden>
         <form id="create-form" dir="auto">
             <label for="firstName"></label>
             <input type="text" name="firstName" placeholder="First Name">
@@ -31,14 +33,17 @@
             <input type="text" name="location" placeholder="location">
             <input type="submit" value="Create Account">
         </form>
+        <button id="login-button">Log In</button>
     </div>
-    <div>
-        <form id="search-form" type="search" dir="auto">
+
+    <div id="gituser-search" hidden>
+        <form id="search-form" type="search" dir="auto" >
             <label for="username"></label>
             <input type="search" name="username" placeholder="Search GitHub Username">
             <input type="submit" value="search">
         </form>
     </div>
+
     <div id="searched-github-users" class="outerDiv" hidden>
        <table id="github-user-table" style="width:100%">
             <tr>
@@ -49,7 +54,6 @@
                 <th>Hirable</th>
                 <th>Followers</th>
                 <th>See User Page</th>
-                <th>Favorite</th>
             </tr>
        </table>
     </div>
@@ -62,7 +66,24 @@
             <h4>[Location]</h4>
             <p>Looking for a job [hireable]</p>
             <button class="outerDiv" id="FavoriteButton">Favorite</button>
-            </div>
+        </div>
+        <div id="user-stats">
+            <span>Site Admin {}</span>
+            <span>Public Repos {}</span>
+            <span>Followers {}</span>
+            <span>Following {}</span>
+        </div>
+        <div id="repos-list">
+            <ul id="user-repos">
+                <table id="github-user-repo-table" style="width:100%">
+                    <tr>
+                        <th>Name</th>
+                        <th>Language</th>
+                        <th>Forks Count</th>
+                    </tr>
+                </table>
+
+            </ul>
         </div>
     </div>
 </body>

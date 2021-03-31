@@ -1,21 +1,31 @@
 //---------- Global Variables ----------//
 const userSearchTable = document.querySelector('#searched-github-users')
 
-
 const title = document.querySelector('#body > h1')
-const loginForm = document.querySelector('#login-form')
-const createForm = document.querySelector('#create-form')
-const searchForm = document.querySelector('#search-form')
+
+const loginDiv = document.querySelector('#client-login')
+const createDiv = document.querySelector('#account-creation')
+const searchDiv = document.querySelector('#gituser-search')
+
+const loginForm = loginDiv.querySelector('#login-form')
+const createForm = createDiv.querySelector('#create-form')
+const searchForm = searchDiv.querySelector('#search-form')
+
 const gitUserTable = document.querySelector('#github-user-table')
+const repoTable = document.querySelector('#github-user-repo-table')
 const gitUserDashboard = document.querySelector('#dashboard')
+const reposUl = gitUserDashboard.querySelector('#user-repos')
 const favoriteButton = document.querySelector('#FavoriteButton')
 const profile = gitUserDashboard.querySelector('#profile-info')
+const createButton = loginDiv.querySelector('#create-button')
+const loginButton = createDiv.querySelector('#login-button')
 
-
-//---------- Url(s) ----------//
-const githubUserUrl = "http://localhost:3000/git_users"
-const clientsUrl = "http://localhost:3000/clients"
+//---------- Backend Url(s) ----------//
+const githubUserBackend = "http://localhost:3000/git_users"
+const clientsBackend = "http://localhost:3000/clients"
 const gitUserClients = "http://localhost:3000/git_user_clients"
+const reposBackend = "http://localhost:3000/repositories"
+
 
 //---------- API(s) ----------//
 
@@ -28,13 +38,26 @@ loginForm.addEventListener('submit', event => {
     event.preventDefault()
     const userName = event.target.username.value
 
-    fetch(`${clientsUrl}/${userName}`)
+    fetch(`${clientsBackend}/${userName}`)
     .then(response => response.json())
     .then(client => {
         gitUserDashboard.dataset.id = client.id
-
+        gitUserDashboard.dataset.username = client.username
+        searchDiv.hidden = false
+        loginDiv.hidden = true
+        createDiv.hidden = true
     })
 })
+//---------- Toggle Create Form Event Listener ----------//
+createButton.addEventListener('click', event => {
+    loginDiv.hidden = true
+    createDiv.hidden = false
+})
+loginButton.addEventListener('click', event => {
+    loginDiv.hidden = false
+    createDiv.hidden = true
+})
+ 
 
 //---------- Create Form Event Listener ----------//
 
@@ -47,7 +70,7 @@ createForm.addEventListener('submit', event => {
         username: createForm.userName.value
     }
 
-    fetch(clientsUrl,{
+    fetch(clientsBackend,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -57,7 +80,10 @@ createForm.addEventListener('submit', event => {
     })
     .then(response => response.json())
     .then(client => {
-        console.log(client)
+        gitUserDashboard.dataset.id = client.id
+        searchDiv.hidden = false
+        loginDiv.hidden = true
+        createDiv.hidden = true
     })
 })
 
@@ -73,7 +99,7 @@ searchForm.addEventListener('submit', event =>{
     }
     else {
         //I will add table head and table body to this if
-        tableReset()
+        gituserTableReset()
         userSearchTable.hidden = false
         gitUserSearch(searchValue)
     }
@@ -95,7 +121,7 @@ const gitUserSearch = (value) => {
 }
 
 //---------- GitUser Table Reset ----------//
-const tableReset = () => {
+const gituserTableReset = () => {
     gitUserTable.innerHTML = `
     <table id="github-user-table" style="width:100%">
         <tr>
@@ -107,6 +133,18 @@ const tableReset = () => {
             <th>Followers</th>
             <th>See User Page</th>
             <th>Favorite</th>
+        </tr>
+    </table>
+    `
+}
+
+const repoTableReset = () => {
+    gitUserTable.innerHTML = `
+    <table id="github-user-table" style="width:100%">
+        <tr>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Forks Count</th>
         </tr>
     </table>
     `
@@ -149,7 +187,6 @@ const searchResult = () => {
 //---------- Fetch from Github API for single Github User ----------//
 const singleUser = (gitUser) => {
     const userUrl = gitUser.url
-    const reposUrl = gitUser.repos_url
     // debugger
     fetch(userUrl)
     .then(response => response.json())
@@ -165,9 +202,10 @@ const singleUser = (gitUser) => {
         const publicRepos = gitUser.public_repos
         const followers = gitUser.followers
         const following = gitUser.following
-
+        favoriteButton.dataset.id = gitUser.reposUrl
         tableCreation(image, username, location, publicRepos, hireable, followers)
         // userDashboard(githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following)
+
     })
 }
 //---------- Git User Search Table appends [8 columns] ----------//
@@ -234,8 +272,8 @@ gitUserTable.addEventListener('click', event =>{
         
         fetch(`${githubUserApi}${id}`)
         .then(response => response.json())
-        .then(gitUser => {        
-            const newGitUser = {
+        .then(gitUser => {       
+            const newUser = {
                 github_id: gitUser.id,
                 login: gitUser.login, //-for username
                 name: gitUser.name,
@@ -245,38 +283,71 @@ gitUserTable.addEventListener('click', event =>{
                 site_admin: gitUser.site_admin,
                 hireable: gitUser.hireable,
                 public_repos: gitUser.public_repos,
+                repos_url: gitUser.repos_url,
                 followers: gitUser.followers,
                 following: gitUser.following
             }
-            fetch(githubUserUrl, {
+
+            fetch(githubUserBackend, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify(newGitUser)
+                body: JSON.stringify(newUser)
             })
             .then(response => response.json())
             .then(newGitUser => {
+                renderReposTable(newGitUser.repos_url)
                 renderDashboard(newGitUser)
                 console.log(newGitUser)
             })
         })
     }
-    else if (event.target.matches('#FavoriteButton')){
-        console.log('click')
-    }
+    
 })
 
+//---------- Render Repos ----------// 
+const renderReposTable = (repos_api) => {
+    const sortedRepoApi = `${repos_api}?q=blog&sort=updated_at&order=desc`
+    fetch(sortedRepoApi)
+    .then(response => response.json())
+    .then(repos => {
+        repos.forEach(repo =>{
+            const tr = document.createElement('tr')
+
+            const td1 = document.createElement('td')
+            td1.textContent = repo.name
+            tr.append(td1)
+            
+            const td2 = document.createElement('td')
+            td2.textContent = repo.language
+            tr.append(td2)
+            
+            const td3 = document.createElement('td')
+            td3.textContent = repo.forks_count
+            tr.append(td3)
+            
+            repoTable.append(tr)
+        })
+    })
+}
 //---------- Render Dashboard ----------// 
-renderDashboard = (newGitUser) => {
+const renderDashboard = (newGitUser) => {
     const img = gitUserDashboard.querySelector('#profile-info > img')
     const userName = gitUserDashboard.querySelector('#profile-info > h2')
     const name = gitUserDashboard.querySelector('#profile-info > h3')
     const location = gitUserDashboard.querySelector('#profile-info > h4')
     const hireable = gitUserDashboard.querySelector('#profile-info > p')
-    
+    const divUserStats = gitUserDashboard.querySelector('#user-stats')
 
+    const siteAdmin = divUserStats.querySelector("#user-stats > span:nth-child(1)")
+    const publicRepos = divUserStats.querySelector("#user-stats > span:nth-child(2)")
+    const followers = divUserStats.querySelector("#user-stats > span:nth-child(3)")
+    const following = divUserStats.querySelector("#user-stats > span:nth-child(4)")
+    
+    
+    
     img.src = newGitUser.avatar_url
     userName.textContent = newGitUser.login
     name.textContent = newGitUser.name
@@ -284,6 +355,11 @@ renderDashboard = (newGitUser) => {
     hireable.textContent = newGitUser.hireable
     profile.dataset.id = newGitUser.id
 
+    siteAdmin.textContent = `Site Admin: ${newGitUser.site_admin}`
+    publicRepos.textContent = `Number of public repositories: ${newGitUser.public_repos}`
+    followers.textContent = `Followers: ${newGitUser.followers}`
+    following.textContent = `Following: ${newGitUser.following}`
+    singleUserRepo(newGitUser.repos_url)
 }
 
 //---------- Event Listener on Fav button ----------// 
@@ -305,35 +381,79 @@ favoriteButton.addEventListener('click', event => {
     .then(gitUserClient => {
         console.log(gitUserClient)
     })
+
 })
 
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
-const singleUserRepo = (reposUrl) => {
-    fetch(reposUrl)
+const singleUserRepo = (reposApi) => {
+    const sortedRepoApi = `${reposApi}?q=blog&sort=updated_at&order=desc`
+    
+    fetch(sortedRepoApi)
     .then(response => response.json())
     .then(userRepos => {
         userRepos.forEach(userRepo => {
-            const repoEventUrl = userRepo.events_url
-            console.log(repoEventUrl)
-            // const name = userRepo.name
-            // const repoLink = userRepo.html_url
-            // const description = userRepo.description
-            // const size = userRepo.size
-            // const language = userRepo.language
-            // const watchersCount = userRepo.watchers_count
-            // const stargazersCount = userRepo.stargazers_count
-            // const forksCount = userRepo.forks_count 
-            repoEvent(repoEventUrl)          
-        })    
+            fetch(userRepo.events_url)
+            .then(response => response.json())
+            .then(events => {
+                // array.filter(e => {return e.type === "PushEvent"})
+                // console.log(events)
+                // event.type === "PushEvent"
+                const commits = events.filter(event => {return event.type === "PushEvent"})
+                const commitsCount = commits.length
+
+
+                const lastCommitDate = () => {
+                    if (commitsCount > 0){
+                        return commits[0].created_at
+                    }
+                    else  {
+                        return  userRepo.created_at
+                    } 
+                }
+
+                
+
+                const newRepo = {
+                    git_user_id: profile.dataset.id,
+                    name: userRepo.name,
+                    repo_id: userRepo.id,
+                    description: userRepo.description,
+                    html_url: userRepo.html_url,
+                    language: userRepo.language,
+                    size: userRepo.size,
+                    forks_count: userRepo.forks_count,
+                    commits: commitsCount,
+                    events_url: userRepo.events_url,
+                    last_commit_date: lastCommitDate(),
+                    repo_creation: userRepo.created_at
+                }
+                
+                gitUserRepo(newRepo)
+               
+            })       
+        })
+
     })
 }
 
-const repoEvent = (repoEventUrl) => {
-    fetch(repoEventUrl)
+const gitUserRepo = (newRepo) => {
+    fetch(reposBackend, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(newRepo)
+    })
     .then(response => response.json())
-    .then(repoEvents =>{
-        console.log(repoEvents)
-
-
-    })  
+    .then(repo =>{
+        console.log(repo)
+        // renderARepo(repo)
+    }) 
 }
+
+//---------- Render repos to dashboard ----------// 
+const renderARepo = (repo) =>{
+    
+}
+
