@@ -16,14 +16,26 @@ const gitUserTable = document.querySelector('#github-user-table')
 const repoTable = document.querySelector('#github-user-repo-table')
 
 const gitUserDashboard = document.querySelector('#dashboard')
+const profile = gitUserDashboard.querySelector('#profile-info')
+const favoriteButton = profile.querySelector('#FavoriteButton')
 
 const favoriteGitusersDiv = document.querySelector('#favorite-gitusers')
 const favoriteGitusersUl = favoriteGitusersDiv.querySelector('#gitusers')
 
-const favoriteButton = document.querySelector('#FavoriteButton')
-const profile = gitUserDashboard.querySelector('#profile-info')
 const createButton = loginDiv.querySelector('#create-button')
 const loginButton = createDiv.querySelector('#login-button')
+
+const navBar = document.querySelector('#nav-bar')
+const clientUserName = navBar.querySelector('#username')
+const clientInfo = navBar.querySelector('#client-info')
+const clientFirstName = clientInfo.querySelector('#first-name')
+const clientLastName = clientInfo.querySelector('#last-name')
+const clientLocation = clientInfo.querySelector('#location')
+
+const clientEditDiv = navBar.querySelector('#edit-client-button-div')
+const updateButton = clientEditDiv.querySelector('#client-button')
+const updateForm = clientEditDiv.querySelector('#update-form')
+
 
 //---------- Backend Url(s) ----------//
 const githubUserBackend = "http://localhost:3000/git_users"
@@ -37,6 +49,16 @@ const reposBackend = "http://localhost:3000/repositories"
 const githubSearchApi = "https://api.github.com/search/users?q="
 const githubUserApi = "https://api.github.com/users/"
 
+//---------- Client Information Render ----------//
+const renderClient = (client) => {
+    clientUserName.textContent = `Logged in as : ${client.username}`
+    clientInfo.dataset.id = client.id
+    clientInfo.dataset.username = client.username
+    clientFirstName.textContent = client.first_name
+    clientLastName.textContent = client.last_name
+    clientLocation.textContent = client.location
+}
+
 //---------- Login Form Event Listener ----------//
 
 loginForm.addEventListener('submit', event => {
@@ -46,16 +68,16 @@ loginForm.addEventListener('submit', event => {
     fetch(`${clientsBackend}/${userName}`)
     .then(response => response.json())
     .then(client => {
-        gitUserDashboard.dataset.id = client.id
-        gitUserDashboard.dataset.username = client.username
-        
+        renderClient(client)
         searchDiv.hidden = false
         loginDiv.hidden = true
         createDiv.hidden = true
-
-        renderFavoriates()
+        renderFavorites()
     })
 })
+
+
+
 //---------- Toggle Create Form Event Listener ----------//
 createButton.addEventListener('click', event => {
     loginDiv.hidden = true
@@ -88,14 +110,43 @@ createForm.addEventListener('submit', event => {
     })
     .then(response => response.json())
     .then(client => {
-        gitUserDashboard.dataset.id = client.id
-        gitUserDashboard.dataset.username = client.username
         searchDiv.hidden = false
         loginDiv.hidden = true
         createDiv.hidden = true
+        renderClient(client)
     })
 })
 
+//---------- Toggle update Form Event Listener ----------//
+updateButton.addEventListener('click', event => {
+    updateForm.hidden = false 
+})
+
+//---------- Update Form Event Listener ----------//
+updateForm.addEventListener('submit', event => {
+    if (event.target.matches('submit')){
+        event.preventDefault()
+        const updatedClient = {
+            first_name: event.target.firstName.value,
+            last_name: event.target.lastName.value,
+            location: event.target.location.value
+        }
+        fetch(`${clientsBackend}/${clientInfo.dataset.username}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(updatedClient)
+        })
+        .then(response => response.json())
+        .then(newClientInfo => {
+            firstName.textContent = newClientInfo.first_name
+            lastName.textContent = newClientInfo.last_name 
+            location.textContent = newClientInfo.location
+        })
+    }
+})
 //---------- Search Bar Event Listener ----------//
 searchForm.addEventListener('submit', event =>{
     event.preventDefault()
@@ -117,8 +168,6 @@ searchForm.addEventListener('submit', event =>{
 //---------- Fetch from Github API for Search Bar ----------//
 
 const gitUserSearch = (value) => {
-    // fetch("https://api.github.com/users/BigRichi") /* [url]*/
-    // fetch("https://api.github.com/users/BigRichi/repos") /* [repos_url]*/
     fetch(`${githubSearchApi}${value}`)
     .then(response => response.json())
     .then(gitUsers => {
@@ -257,14 +306,6 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     td7.append(userBtn)
     tr.append(td7)
 
-    // const td8 = document.createElement('td') Move to Dashboard
-    // const favoriteBtn = document.createElement('button')
-    // favoriteBtn.textContent = 'Favorite'
-    // favoriteBtn.classList = 'button'
-    // favoriteBtn.id = 'FavoriteButton'
-    // userBtn.dataset.id = username
-    // td8.append(favoriteBtn)
-    // tr.append(td8)
 
     gitUserTable.append(tr)
     
@@ -275,11 +316,11 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
 // const userDashboard = (githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following) => {
 gitUserTable.addEventListener('click', event =>{
     if (event.target.matches('#UserButton')){
-        const id = event.target.dataset.id
+        const userName = event.target.dataset.id
         userSearchTable.hidden = true
         gitUserDashboard.hidden = false
         
-        fetch(`${githubUserApi}${id}`)
+        fetch(`${githubUserApi}${userName}`)
         .then(response => response.json())
         .then(gitUser => {       
             const newUser = {
@@ -296,7 +337,7 @@ gitUserTable.addEventListener('click', event =>{
                 followers: gitUser.followers,
                 following: gitUser.following
             }
-
+            // debugger
             fetch(githubUserBackend, {
                 method: 'POST',
                 headers: {
@@ -307,9 +348,9 @@ gitUserTable.addEventListener('click', event =>{
             })
             .then(response => response.json())
             .then(newGitUser => {
+                debugger
                 renderReposTable(newGitUser.repos_url)
                 renderDashboard(newGitUser)
-                console.log(newGitUser)
             })
         })
     }
@@ -318,16 +359,21 @@ gitUserTable.addEventListener('click', event =>{
 
 //---------- Render Repos ----------// 
 const renderReposTable = (repos_api) => {
-    const sortedRepoApi = `${repos_api}?q=blog&sort=updated_at&order=desc`
-    fetch(sortedRepoApi)
+    // const sortedRepoApi = `${repos_api}?q=blog&sort=updated_at&order=desc`
+    fetch(`${repos_api}?q=blog&sort=updated_at&order=desc`)
     .then(response => response.json())
     .then(repos => {
         repos.forEach(repo =>{
             const tr = document.createElement('tr')
 
+            const atag = document.createElement('a')
+            atag.href = repo.html_url
+            atag.target = "_blank"
+
             const td1 = document.createElement('td')
             td1.textContent = repo.name
-            tr.append(td1)
+            atag.append(td1)
+            tr.append(atag)
             
             const td2 = document.createElement('td')
             td2.textContent = repo.language
@@ -336,6 +382,7 @@ const renderReposTable = (repos_api) => {
             const td3 = document.createElement('td')
             td3.textContent = repo.forks_count
             tr.append(td3)
+            
             
             repoTable.append(tr)
         })
@@ -374,7 +421,7 @@ const renderDashboard = (newGitUser) => {
 //---------- Event Listener on Fav button ----------// 
 favoriteButton.addEventListener('click', event => {
     const newGitUserClient = {
-        client_id: gitUserDashboard.dataset.id,
+        client_id: clientInfo.dataset.id,
         git_user_id: profile.dataset.id
     }
 
@@ -467,8 +514,8 @@ const renderARepo = (repo) =>{
 }
 
 //---------- Render Favorite Git Users ----------// 
-const renderFavoriates = () => {
-    fetch(`${clientsBackend}/${gitUserDashboard.dataset.username}`)
+const renderFavorites = () => {
+    fetch(`${clientsBackend}/${clientInfo.dataset.username}`)
     .then(response => response.json())
     .then(client => {
         client.git_user_clients.forEach(gitUserClient => {
@@ -499,3 +546,47 @@ favoriteGitusersUl.addEventListener('click', event => {
         li.remove()
     }
 })
+
+
+
+
+
+
+
+// Parameters: {"github_id"=>4323180, 
+// "login"=>"adamwathan", 
+// "name"=>"Adam Wathan", 
+// "avatar_url"=>"https://avatars.githubusercontent.com/u/4323180?v=4", 
+// "bio"=>"Creator of Tailwind CSS, author of Refactoring UI, host of Full Stack Radio.", 
+// "location"=>"Ontario, Canada", 
+// "site_admin"=>false, 
+// "hireable"=>nil, 
+// "public_repos"=>136, 
+// "repos_url"=>"https://api.github.com/users/adamwathan/repos", 
+// "followers"=>6426, 
+// "following"=>12, 
+
+// "git_user"=>{"github_id"=>4323180, "login"=>"adamwathan", "name"=>"Adam Wathan", "avatar_url"=>"https://avatars.githubusercontent.com/u/4323180?v=4", "bio"=>"Creator of Tailwind CSS, author of Refactoring UI, host of Full Stack Radio.", "location"=>"Ontario, Canada", "site_admin"=>false, "hireable"=>nil, "public_repos"=>136, "repos_url"=>"https://api.github.com/users/adamwathan/repos", "followers"=>6426, "following"=>12}}
+
+// #<ActionController::Parameters {"github_id"=>68611902,
+//  "login"=>"jpham1109", 
+//  "name"=>"J Hoa Pham L-H",
+//   "avatar_url"=>"https://avatars.githubusercontent.com/u/68611902?v=4",
+//    "bio"=>"Future Full-stack Developer ", 
+//    "location"=>"Brooklyn, NY", 
+//    "site_admin"=>false, 
+//    "hireable"=>nil, 
+//    "public_repos"=>173, 
+//    "repos_url"=>"https://api.github.com/users/jpham1109/repos", 
+//    "followers"=>1, 
+//    "following"=>1, 
+//    "controller"=>"git_users", 
+//    "action"=>"create", 
+
+//    "git_user"=>{"github_id"=>68611902, "login"=>"jpham1109", "name"=>"J Hoa Pham L-H", "avatar_url"=>"https://avatars.githubusercontent.com/u/68611902?v=4", "bio"=>"Future Full-stack Developer ", "location"=>"Brooklyn, NY", "site_admin"=>false, "hireable"=>nil, "public_repos"=>173, "repos_url"=>"https://api.github.com/users/jpham1109/repos", "followers"=>1, "following"=>1}} permitted: false>
+// nil
+
+
+// #<ActionController::Parameters {"github_id"=>74831533, "login"=>"maxmiller413", "name"=>nil, "avatar_url"=>"https://avatars.githubusercontent.com/u/74831533?v=4", "bio"=>nil, "location"=>nil, "site_admin"=>false, "hireable"=>nil, "public_repos"=>165, "repos_url"=>"https://api.github.com/users/maxmiller413/repos", "followers"=>1, "following"=>1, "controller"=>"git_users", "action"=>"create", 
+
+// "git_user"=>{"github_id"=>74831533, "login"=>"maxmiller413", "name"=>nil, "avatar_url"=>"https://avatars.githubusercontent.com/u/74831533?v=4", "bio"=>nil, "location"=>nil, "site_admin"=>false, "hireable"=>nil, "public_repos"=>165, "repos_url"=>"https://api.github.com/users/maxmiller413/repos", "followers"=>1, "following"=>1}} permitted: false>
