@@ -60,13 +60,14 @@
         <button id="login-button">Log In</button>
     </div>
 
-    <div id="main-page">Main Page
-        <div id="favorite-gitusers">
+    <div id="main-page" class="columns">Main Page
+        <div id="favorite-gitusers" class="column">
             <ul id="gitusers">Favorite Gituser Name
 
             </ul>
         </div>
-        <div id="search">search
+        
+        <div id="search" class="column">search
             <div id="gituser-search" hidden>
                 <form id="search-form" type="search" dir="auto" >
                     <label for="username"></label>
@@ -76,29 +77,35 @@
             </div>
 
             <div id="searched-github-users" class="outerDiv" hidden>
-            <table id="github-user-table" style="width:100%">
-                    <tr>
-                        <th>Picture</th>
-                        <th>Username</th>
-                        <th>Location</th>
-                        <th>Public Repos</th>
-                        <th>Hirable</th>
-                        <th>Followers</th>
-                        <th>See User Page</th>
-                    </tr>
-            </table>
+                <table id="github-user-table" style="width:100%">
+                        <tr>
+                            <th>Picture</th>
+                            <th>Username</th>
+                            <th>Location</th>
+                            <th>Public Repos</th>
+                            <th>Hirable</th>
+                            <th>Followers</th>
+                            <th>See User Page</th>
+                        </tr>
+                </table>
             </div>
-
         </div>
-        <div id="dashboard" class="outerDiv" hidden>
-
+        
+        <div id="dashboard" class="column">
             <div id="profile-info">
-                <img src="" alt="">
-                <h2>[Github User Username]</h2>
-                <h3>[Github User Name]</h3>
-                <h4>[Location]</h4>
-                <p>Looking for a job [hireable]</p>
-                <button class="outerDiv" id="FavoriteButton">Favorite</button>
+                <div class="card">
+                    <div class="card-image">
+                      <figure class="image is-4by3">
+                        <img id="gituser-img" src="" alt="N/A">
+                      </figure>
+                    </div>
+
+                    <h2>[Github User Username]</h2>
+                    <h3>[Github User Name]</h3>
+                    <h4>[Location]</h4>
+                    <p>Looking for a job [hireable]</p>
+                    <button class="outerDiv" id="FavoriteButton">Favorite</button>
+                </div>
             </div>
 
             <div id="user-stats">
@@ -106,6 +113,10 @@
                 <span>Public Repos {}</span>
                 <span>Followers {}</span>
                 <span>Following {}</span>
+            </div>
+
+            <div id="charts">put graphs here
+
             </div>
 
             <div id="repos-list">

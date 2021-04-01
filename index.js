@@ -348,7 +348,6 @@ gitUserTable.addEventListener('click', event =>{
             })
             .then(response => response.json())
             .then(newGitUser => {
-                debugger
                 renderReposTable(newGitUser.repos_url)
                 renderDashboard(newGitUser)
             })
@@ -390,7 +389,7 @@ const renderReposTable = (repos_api) => {
 }
 //---------- Render Dashboard ----------// 
 const renderDashboard = (newGitUser) => {
-    const img = gitUserDashboard.querySelector('#profile-info > img')
+    const img = gitUserDashboard.querySelector("#gituser-img")
     const userName = gitUserDashboard.querySelector('#profile-info > h2')
     const name = gitUserDashboard.querySelector('#profile-info > h3')
     const location = gitUserDashboard.querySelector('#profile-info > h4')

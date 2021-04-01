@@ -1,3 +1,30 @@
 img {
     height: 50px;
 }
+
+#nav-bar {
+    background-color:black;
+    color: white
+}
+
+#main-page {
+    background-color:blue;
+    color: white;
+}
+
+#search {
+    background-color: yellow;
+    color: black;
+
+}
+
+#searched-github-users {
+    background-color:red;
+    color: black;
+
+}
+
+#dashboard {
+    background-color:green;
+    color: black;
+}
