@@ -36,6 +36,7 @@ const clientEditDiv = navBar.querySelector('#edit-client-button-div')
 const updateButton = clientEditDiv.querySelector('#client-button')
 const updateForm = clientEditDiv.querySelector('#update-form')
 
+const mainPage = document.querySelector('#main-page')
 
 //---------- Backend Url(s) ----------//
 const githubUserBackend = "http://localhost:3000/git_users"
@@ -69,9 +70,10 @@ loginForm.addEventListener('submit', event => {
     .then(response => response.json())
     .then(client => {
         renderClient(client)
-        searchDiv.hidden = false
-        loginDiv.hidden = true
-        createDiv.hidden = true
+        searchDiv.style ="display:block" 
+        loginDiv.style ="display:none" 
+        createDiv.style ="display:none" 
+        mainPage.style ="display:block" 
         renderFavorites()
     })
 })
@@ -80,12 +82,12 @@ loginForm.addEventListener('submit', event => {
 
 //---------- Toggle Create Form Event Listener ----------//
 createButton.addEventListener('click', event => {
-    loginDiv.hidden = true
-    createDiv.hidden = false
+    loginDiv.style ="display:none" 
+    createDiv.style ="display:block" 
 })
 loginButton.addEventListener('click', event => {
-    loginDiv.hidden = false
-    createDiv.hidden = true
+    loginDiv.style ="display:block" 
+    createDiv.style ="display:none" 
 })
  
 
@@ -518,6 +520,7 @@ const renderFavorites = () => {
     .then(response => response.json())
     .then(client => {
         client.git_user_clients.forEach(gitUserClient => {
+            
             const li = document.createElement('li')
             li.dataset.id = gitUserClient.id
             const gitUser = gitUserClient.git_user
@@ -526,8 +529,12 @@ const renderFavorites = () => {
             deleteButton.textContent = "Delete"
             deleteButton.classList = "button is-black is-small"
             deleteButton.id = "delete-favorite"
+            const div = document.createElement('div')
+            div.classList.add("block")
             li.append(deleteButton)
-            favoriteGitusersUl.append(li)
+            div.append(li)
+            favoriteGitusersUl.append(div)
+
         })
     })
 }

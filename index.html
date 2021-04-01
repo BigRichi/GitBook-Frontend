@@ -36,31 +36,60 @@
             </form>
         </div>
     </div>
-    <div id="client-login">
-        <form id="login-form" dir="auto">
-            <label for="userName"></label>
-            <input type="text" name="username" placeholder="User Name">
-            <input type="submit" value="Login In">
-        </form>
-        <button id="create-button">Sign Up</button>
+
+    <div id="client-login" style="display:block">
+        <div class="form-wrapper">
+            <form id="login-form" dir="auto" class="box" >
+                <div class="field">
+                    <label class="label" for="userName"></label>
+                    <div class="control">
+                        <input class="input" type="text" name="username" placeholder="User Name">
+                    </div>
+                </div>  
+                <input class="button is-primary is-small login-bt"  type="submit" value="Login In">
+            </form>
+            <div class="create-div">
+                <button class="button is-primary is-small login-bt" id="create-button">Sign Up</button>
+            </div>
+        </div>
     </div>
 
-    <div id="account-creation" hidden>
-        <form id="create-form" dir="auto">
-            <label for="firstName"></label>
-            <input type="text" name="firstName" placeholder="First Name">
-            <label for="lastName"></label>
-            <input type="text" name="lastName" placeholder="last Name">
-            <label for="userName"></label>
-            <input type="text" name="userName" placeholder="User Name">
-            <label for="location"></label>
-            <input type="text" name="location" placeholder="location">
-            <input type="submit" value="Create Account">
-        </form>
-        <button id="login-button">Log In</button>
+    <div id="account-creation" style="display:none">
+        <div class="form-wrapper">
+            <form id="create-form" dir="auto" class="box">
+                <div class="field">
+                    <label class="label" for="firstName"></label>
+                    <div class="control">
+                        <input class="input" type="text" name="firstName" placeholder="First Name">
+                    </div>
+                </div> 
+                <div class="field">
+                    <label class="label" for="lastName"></label>
+                    <div class="control">
+                        <input class="input" type="text" name="lastName" placeholder="last Name">
+                    </div>
+                </div>
+                <div class="field"> 
+                    <label class="label" for="userName"></label>
+                    <div class="control">
+                        <input class="input" type="text" name="userName" placeholder="User Name">
+                    </div>
+                </div>  
+                <div class="field">
+                    <label class="label" for="location"></label>
+                    <div class="control">
+                        <input class="input" type="text" name="location" placeholder="location">
+                    </div>
+                </div>  
+                <input class="button is-primary is-small login-bt2" type="submit" value="Create Account">
+            </form>
+            <div class="create-div">
+                <button class="button is-primary is-small login-bt" id="login-button">Log In</button>
+            </div>
+        </div>
     </div>
 
-    <div id="main-page" class="columns">Main Page
+    <div id="main-page" class="columns" style="display:none">Main Page
         <div id="favorite-gitusers" class="column">
             <ul id="gitusers">Favorite Gituser Name
 
@@ -86,6 +115,9 @@
                             <th>Hirable</th>
                             <th>Followers</th>
                             <th>See User Page</th>
+                        </tr>
+                        <tr>
+
                         </tr>
                 </table>
             </div>
