@@ -300,7 +300,7 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     const td7 = document.createElement('td')
     const userBtn = document.createElement('button')
     userBtn.textContent = 'Show Me'
-    userBtn.classList = 'button'
+    userBtn.classList = "button is-black is-small"
     userBtn.id = 'UserButton'
     userBtn.dataset.id = username
     td7.append(userBtn)
@@ -318,7 +318,7 @@ gitUserTable.addEventListener('click', event =>{
     if (event.target.matches('#UserButton')){
         const userName = event.target.dataset.id
         userSearchTable.hidden = true
-        gitUserDashboard.hidden = false
+        gitUserDashboard.style ="display:block" 
         
         fetch(`${githubUserApi}${userName}`)
         .then(response => response.json())
@@ -390,10 +390,10 @@ const renderReposTable = (repos_api) => {
 //---------- Render Dashboard ----------// 
 const renderDashboard = (newGitUser) => {
     const img = gitUserDashboard.querySelector("#gituser-img")
-    const userName = gitUserDashboard.querySelector('#profile-info > h2')
-    const name = gitUserDashboard.querySelector('#profile-info > h3')
-    const location = gitUserDashboard.querySelector('#profile-info > h4')
-    const hireable = gitUserDashboard.querySelector('#profile-info > p')
+    const userName = gitUserDashboard.querySelector('#gituser-username')
+    const name = gitUserDashboard.querySelector('#gituser-name')
+    const location = gitUserDashboard.querySelector('#gituser-location')
+    const hireable = gitUserDashboard.querySelector('#hireable')
     const divUserStats = gitUserDashboard.querySelector('#user-stats')
 
     const siteAdmin = divUserStats.querySelector("#user-stats > span:nth-child(1)")
@@ -524,6 +524,7 @@ const renderFavorites = () => {
             li.textContent = gitUser.name
             const deleteButton = document.createElement('button')
             deleteButton.textContent = "Delete"
+            deleteButton.classList = "button is-black is-small"
             deleteButton.id = "delete-favorite"
             li.append(deleteButton)
             favoriteGitusersUl.append(li)
