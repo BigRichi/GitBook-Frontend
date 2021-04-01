@@ -5,6 +5,7 @@ const title = document.querySelector('#body > h1')
 
 const loginDiv = document.querySelector('#client-login')
 const createDiv = document.querySelector('#account-creation')
+
 const searchDiv = document.querySelector('#gituser-search')
 
 const loginForm = loginDiv.querySelector('#login-form')
@@ -13,8 +14,12 @@ const searchForm = searchDiv.querySelector('#search-form')
 
 const gitUserTable = document.querySelector('#github-user-table')
 const repoTable = document.querySelector('#github-user-repo-table')
+
 const gitUserDashboard = document.querySelector('#dashboard')
-const reposUl = gitUserDashboard.querySelector('#user-repos')
+
+const favoriteGitusersDiv = document.querySelector('#favorite-gitusers')
+const favoriteGitusersUl = favoriteGitusersDiv.querySelector('#gitusers')
+
 const favoriteButton = document.querySelector('#FavoriteButton')
 const profile = gitUserDashboard.querySelector('#profile-info')
 const createButton = loginDiv.querySelector('#create-button')
@@ -43,9 +48,12 @@ loginForm.addEventListener('submit', event => {
     .then(client => {
         gitUserDashboard.dataset.id = client.id
         gitUserDashboard.dataset.username = client.username
+        
         searchDiv.hidden = false
         loginDiv.hidden = true
         createDiv.hidden = true
+
+        renderFavoriates()
     })
 })
 //---------- Toggle Create Form Event Listener ----------//
@@ -81,6 +89,7 @@ createForm.addEventListener('submit', event => {
     .then(response => response.json())
     .then(client => {
         gitUserDashboard.dataset.id = client.id
+        gitUserDashboard.dataset.username = client.username
         searchDiv.hidden = false
         loginDiv.hidden = true
         createDiv.hidden = true
@@ -457,3 +466,36 @@ const renderARepo = (repo) =>{
     
 }
 
+//---------- Render Favorite Git Users ----------// 
+const renderFavoriates = () => {
+    fetch(`${clientsBackend}/${gitUserDashboard.dataset.username}`)
+    .then(response => response.json())
+    .then(client => {
+        client.git_user_clients.forEach(gitUserClient => {
+            const li = document.createElement('li')
+            li.dataset.id = gitUserClient.id
+            const gitUser = gitUserClient.git_user
+            li.textContent = gitUser.name
+            const deleteButton = document.createElement('button')
+            deleteButton.textContent = "Delete"
+            deleteButton.id = "delete-favorite"
+            li.append(deleteButton)
+            favoriteGitusersUl.append(li)
+        })
+    })
+}
+
+
+
+//---------- Event Listener favorite gitusers list ----------// 
+favoriteGitusersUl.addEventListener('click', event => {
+
+    if(event.target.matches('#delete-favorite')){
+        const li = event.target.closest('li')
+        const id = li.dataset.id
+        fetch(`${gitUserClients}/${id}`, {
+            method: 'DELETE',
+        })
+        li.remove()
+    }
+})

@@ -11,7 +11,29 @@
 </head>
 
 <body>
-    <h1>GitBook</h1>
+    <header>
+        <h1>GitBook</h1>
+    </header>
+    
+    <div id="nav-bar">Logged In as :
+        <div id="client-info">
+            <span>Client First Name</span>
+            <span>Client Last Name</span>
+            <span>Client Location</span>
+        </div>
+        <div id="edit-client-button-div">
+            <button id="client-button">Update Info</button>
+            <form id="update-form" dir="auto" hidden>
+                <label for="firstName"></label>
+                <input type="text" name="firstName" placeholder="First Name">
+                <label for="lastName"></label>
+                <input type="text" name="lastName" placeholder="last Name">
+                <label for="location"></label>
+                <input type="text" name="location" placeholder="location">
+                <input type="submit" value="Update Account">
+            </form>
+        </div>
+    </div>
     <div id="client-login">
         <form id="login-form" dir="auto">
             <label for="userName"></label>
@@ -36,45 +58,55 @@
         <button id="login-button">Log In</button>
     </div>
 
-    <div id="gituser-search" hidden>
-        <form id="search-form" type="search" dir="auto" >
-            <label for="username"></label>
-            <input type="search" name="username" placeholder="Search GitHub Username">
-            <input type="submit" value="search">
-        </form>
-    </div>
+    <div id="main-page">Main Page
+        <div id="favorite-gitusers">
+            <ul id="gitusers">Favorite Gituser Name
 
-    <div id="searched-github-users" class="outerDiv" hidden>
-       <table id="github-user-table" style="width:100%">
-            <tr>
-                <th>Picture</th>
-                <th>Username</th>
-                <th>Location</th>
-                <th>Public Repos</th>
-                <th>Hirable</th>
-                <th>Followers</th>
-                <th>See User Page</th>
-            </tr>
-       </table>
-    </div>
-    
-    <div id="dashboard" class="outerDiv" hidden>
-        <div id="profile-info">
-            <img src="" alt="">
-            <h2>[Github User Username]</h2>
-            <h3>[Github User Name]</h3>
-            <h4>[Location]</h4>
-            <p>Looking for a job [hireable]</p>
-            <button class="outerDiv" id="FavoriteButton">Favorite</button>
+            </ul>
         </div>
-        <div id="user-stats">
-            <span>Site Admin {}</span>
-            <span>Public Repos {}</span>
-            <span>Followers {}</span>
-            <span>Following {}</span>
+        <div id="search">search
+            <div id="gituser-search" hidden>
+                <form id="search-form" type="search" dir="auto" >
+                    <label for="username"></label>
+                    <input type="search" name="username" placeholder="Search GitHub Username">
+                    <input type="submit" value="search">
+                </form>
+            </div>
+
+            <div id="searched-github-users" class="outerDiv" hidden>
+            <table id="github-user-table" style="width:100%">
+                    <tr>
+                        <th>Picture</th>
+                        <th>Username</th>
+                        <th>Location</th>
+                        <th>Public Repos</th>
+                        <th>Hirable</th>
+                        <th>Followers</th>
+                        <th>See User Page</th>
+                    </tr>
+            </table>
+            </div>
+
         </div>
-        <div id="repos-list">
-            <ul id="user-repos">
+        <div id="dashboard" class="outerDiv" hidden>
+
+            <div id="profile-info">
+                <img src="" alt="">
+                <h2>[Github User Username]</h2>
+                <h3>[Github User Name]</h3>
+                <h4>[Location]</h4>
+                <p>Looking for a job [hireable]</p>
+                <button class="outerDiv" id="FavoriteButton">Favorite</button>
+            </div>
+
+            <div id="user-stats">
+                <span>Site Admin {}</span>
+                <span>Public Repos {}</span>
+                <span>Followers {}</span>
+                <span>Following {}</span>
+            </div>
+
+            <div id="repos-list">
                 <table id="github-user-repo-table" style="width:100%">
                     <tr>
                         <th>Name</th>
@@ -82,7 +114,9 @@
                         <th>Forks Count</th>
                     </tr>
                 </table>
-            </ul>
+            </div>
+
         </div>
     </div>
+
 </body>
