@@ -23,8 +23,8 @@
             <span id="last-name"></span>
             <span id="location"></span>
         </div>
-        <div id="edit-client-button-div">
-            <button id="client-button" style="display:none">Update Info</button>
+        <div id="edit-client-button-div" style="display:none">
+            <button id="client-button" >Update Info</button>
             <form id="update-form" dir="auto" hidden>
                 <label for="firstName"></label>
                 <input type="text" name="firstName" placeholder="First Name">
@@ -46,7 +46,7 @@
                         <input class="input" type="text" name="username" placeholder="User Name">
                     </div>
                 </div>  
-                <input class="button is-primary is-small login-bt"  type="submit" value="🐶">
+                <input class="button is-primary is-small login-bt"  type="submit" value=" 🐶 ">
             </form>
             <div class="create-div">
                 <button class="button is-primary is-small login-bt" id="create-button">Sign Up</button>
@@ -81,7 +81,7 @@
                         <input class="input" type="text" name="location" placeholder="location">
                     </div>
                 </div>  
-                <input class="button is-primary is-small login-bt2" type="submit" value="Create Account">
+                <input class="button is-primary is-small login-bt2" type="submit" value=" 🐼 ">
             </form>
             <div class="create-div">
                 <button class="button is-primary is-small login-bt" id="login-button">Log In</button>
@@ -93,7 +93,7 @@
     DASHBOARD
 
  -->
-    <div id="main-page" style="display:none">
+    <div id="main-page">
         <!-- 
             LEFT COMPONENT OF FAVORITE USER
          -->
@@ -136,7 +136,7 @@
          -->
         <!-- style="display:none" -->
         <div id="dashboard"  style="display:none">
-            <div id="profile-info">
+            <div id="profile-info" style="display:none">
                 <!-- <div class="card"> -->
 
                     <!-- <div class="card-image">
@@ -167,16 +167,16 @@
                 <span></span>
             </div>
 
-            <div id="charts">put graphs here
+            <div id="charts" style="display:none">
                 <canvas id="gituser-chart"></canvas>
             </div>
 
-            <div id="repos-list">
+            <div id="repos-list" style="display:none">
                 <table id="github-user-repo-table">
-                    <tr>
+                    <tr id="repo-first-row">
+                        <th>Forks Count</th>
                         <th>Name</th>
                         <th>Language</th>
-                        <th>Forks Count</th>
                     </tr>
                 </table>
             </div>

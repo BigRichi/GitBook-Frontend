@@ -30,6 +30,11 @@ header {
     width: 100%;
 }
 
+#client-info {
+    padding: 0.5em;
+
+}
+
 #account-creation {
 
     display: flex;
@@ -77,7 +82,8 @@ header {
 #nav-bar {
     border-radius: 25px;
     background-color: rgb(48, 27, 63);
-    color: white
+    color: white;
+    padding: 0.5em;
 }
 
 
@@ -93,7 +99,7 @@ header {
     grid-template-columns: 20% 1fr !important;
     grid-template-rows: 1fr 1fr !important;
     width: 100%;
-    padding: 1em;
+    padding: 1em ;
     grid-gap: 20px;
 }
 #favorite-gitusers {
@@ -193,8 +199,7 @@ input[type=search] {
     grid-row: 1/2 !important;
     grid-column: 2/5 !important;
     padding: 1em;
-    height: 80px;
-    overflow-y: scroll;
+    height: 120px;
 }
 
 .user-stats {
@@ -216,7 +221,7 @@ input[type=search] {
     grid-row: 2/4;
     padding: 1em;
     overflow-y: scroll;
-    height: 200px;
+    height: 420px;
 }
 
 #github-user-repo-table {

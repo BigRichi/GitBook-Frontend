@@ -37,6 +37,8 @@ const updateButton = clientEditDiv.querySelector('#client-button')
 const updateForm = clientEditDiv.querySelector('#update-form')
 
 const mainPage = document.querySelector('#main-page')
+const charts = document.querySelector('#charts')
+const reposList = document.querySelector('#repos-list')
 
 //---------- Backend Url(s) ----------//
 const githubUserBackend = "http://localhost:3000/git_users"
@@ -76,6 +78,7 @@ loginForm.addEventListener('submit', event => {
             loginDiv.style = "display:none"
             createDiv.style = "display:none"
             mainPage.style = "display:block"
+            clientEditDiv.style = "display:block"
             renderFavorites()
         })
 })
@@ -119,17 +122,23 @@ createForm.addEventListener('submit', event => {
             loginDiv.style = "display:none"
             createDiv.style = "display:none"
             mainPage.style = "display:block"
+            clientEditDiv.style = "display:block"
         })
 })
 
 //---------- Toggle update Form Event Listener ----------//
 updateButton.addEventListener('click', event => {
-    updateForm.hidden = false
+    if (updateForm.hidden === true){
+        updateForm.hidden = false
+    }   
+    else{
+        updateForm.hidden = true
+    }
 })
 
 //---------- Update Form Event Listener ----------//
 updateForm.addEventListener('submit', event => {
-    if (event.target.matches('submit')) {
+    // if (event.target.matches('submit')) {
         event.preventDefault()
         const updatedClient = {
             first_name: event.target.firstName.value,
@@ -146,11 +155,12 @@ updateForm.addEventListener('submit', event => {
         })
             .then(response => response.json())
             .then(newClientInfo => {
-                firstName.textContent = newClientInfo.first_name
-                lastName.textContent = newClientInfo.last_name
-                location.textContent = newClientInfo.location
+                clientFirstName.textContent = newClientInfo.first_name
+                clientLastName.textContent = newClientInfo.last_name
+                clientLocation.textContent = newClientInfo.location
             })
-    }
+            .catch(error => console.log(error.message))
+    // }
 })
 //---------- Search Bar Event Listener ----------//
 searchForm.addEventListener('submit', event => {
@@ -158,7 +168,7 @@ searchForm.addEventListener('submit', event => {
     const searchValue = searchForm.username.value
 
     if (searchValue === "") {
-        //In essance this if will change the between the dashboard and the search div
+        //In essancce this if will change the between the dashboard and the search div
         userSearchTable.hidden = true
         gitUserTable.innerHTML = ""
     }
@@ -203,10 +213,10 @@ const gituserTableReset = () => {
 const repoTableReset = () => {
     repoTable.innerHTML = `
     <table id="github-user-repo-table">
-        <tr>
+        <tr id="repo-table">
+            <th>Forks</th>
             <th>Name</th>
             <th>Language</th>
-            <th>Forks Count</th>
         </tr>
     </table>
     `
@@ -326,6 +336,10 @@ gitUserTable.addEventListener('click', event => {
         const userName = event.target.dataset.id
         userSearchTable.hidden = true
         gitUserDashboard.style = "display:block"
+        reposList.style = "display:block"
+        profile.style = "display:block"
+        charts.style = "display:none"
+        
 
         fetch(`${githubUserApi}${userName}`)
             .then(response => response.json())
@@ -389,16 +403,16 @@ const repoTableRender = (repo) => {
     atag.target = "_blank"
 
     const td1 = document.createElement('td')
-    td1.textContent = repo.name
-    atag.append(td1)
+    td1.textContent = repo.forks_count
+    tr.append(td1)
+    
+    const td2 = document.createElement('td')
+    td2.textContent = repo.name
+    atag.append(td2)
     tr.append(atag)
 
-    const td2 = document.createElement('td')
-    td2.textContent = repo.language
-    tr.append(td2)
-
     const td3 = document.createElement('td')
-    td3.textContent = repo.forks_count
+    td3.textContent = repo.language
     tr.append(td3)
 
 
@@ -522,10 +536,10 @@ const gitUserRepo = (newRepo) => {
         body: JSON.stringify(newRepo)
     })
         .then(response => response.json())
-        .then(repo => {
+        // .then(repo => {
             // console.log(repo)
             // renderARepo(repo)
-        })
+        // })
 }
 
 //---------- Render repos to dashboard ----------// 
@@ -539,6 +553,7 @@ const renderFavorites = () => {
         .then(response => response.json())
         .then(client => {
             favoriteGitusersUl.innerHTML = ""
+            favoriteGitusersUl.textContent = "Favorite GitUsers"
             client.git_user_clients.forEach(gitUserClient => {
 
                 const li = document.createElement('li')
@@ -579,12 +594,15 @@ favoriteGitusersUl.addEventListener('click', event => {
         fetch(`${githubUserBackend}/${event.target.dataset.gitUserid}`)
             .then(response => response.json())
             .then(gitUser => {
+                profile.style = "display:block"
+                reposList.style = "display:block"
                 renderDashboard(gitUser)
                 repoTableReset()
+                charts.style = "display:block"
+                charts.textContent= ""
                 displayChart(gitUser)
                 gitUser.repositories.forEach(repo => {
                     repoTableRender(repo)
-
                 })
 
             })
@@ -596,16 +614,27 @@ favoriteGitusersUl.addEventListener('click', event => {
 const displayChart = (gitUser) => {
     const keys = Object.keys(gitUser.repo_language)
     const values = Object.values(gitUser.repo_language)
+    const canvas = document.createElement('canvas')
+    canvas.id = "gituser-chart"
+    charts.append(canvas)
     let myChart = document.getElementById('gituser-chart').getContext('2d')
-    let languageGraph = new Chart(myChart, {
+    // debugger
+    new Chart(myChart, {
         type: 'pie',
         data: {
-            lables: Array.from(keys),
+            labels: keys,
             datasets: [{
-                lable: "Languages",
-                data: Array.from(values)
+                label: "Languages",
+                data: values,
+                backgroundColor: 'rgb(105, 60, 114)'
             }]
         },
-        // options{}
+        options:{
+            title:{
+                display:true,
+                text:'Repository Language'
+            }
+
+        }
     });
 }
