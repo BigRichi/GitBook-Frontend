@@ -52,7 +52,7 @@ const githubUserApi = "https://api.github.com/users/"
 
 //---------- Client Information Render ----------//
 const renderClient = (client) => {
-    
+
     clientUserName.textContent = `Logged in as : ${client.username}`
     clientInfo.dataset.id = client.id
     clientInfo.dataset.username = client.username
@@ -201,8 +201,8 @@ const gituserTableReset = () => {
 }
 
 const repoTableReset = () => {
-    gitUserTable.innerHTML = `
-    <table id="github-user-table" style="width:100%">
+    repoTable.innerHTML = `
+    <table id="github-user-repo-table">
         <tr>
             <th>Name</th>
             <th>Language</th>
@@ -357,6 +357,8 @@ gitUserTable.addEventListener('click', event => {
                     .then(newGitUser => {
                         renderReposTable(newGitUser.repos_url)
                         renderDashboard(newGitUser)
+                        singleUserRepo(newGitUser.repos_url)
+
                     })
             })
     }
@@ -369,31 +371,40 @@ const renderReposTable = (repos_api) => {
     fetch(`${repos_api}?q=blog&sort=updated_at&order=desc`)
         .then(response => response.json())
         .then(repos => {
+            repoTableReset()
             repos.forEach(repo => {
-                const tr = document.createElement('tr')
-
-                const atag = document.createElement('a')
-                atag.href = repo.html_url
-                atag.target = "_blank"
-
-                const td1 = document.createElement('td')
-                td1.textContent = repo.name
-                atag.append(td1)
-                tr.append(atag)
-
-                const td2 = document.createElement('td')
-                td2.textContent = repo.language
-                tr.append(td2)
-
-                const td3 = document.createElement('td')
-                td3.textContent = repo.forks_count
-                tr.append(td3)
-
-
-                repoTable.append(tr)
+                repoTableRender(repo)
             })
         })
 }
+
+
+//---------- Render Repo Table ----------// 
+
+const repoTableRender = (repo) => {
+    const tr = document.createElement('tr')
+
+    const atag = document.createElement('a')
+    atag.href = repo.html_url
+    atag.target = "_blank"
+
+    const td1 = document.createElement('td')
+    td1.textContent = repo.name
+    atag.append(td1)
+    tr.append(atag)
+
+    const td2 = document.createElement('td')
+    td2.textContent = repo.language
+    tr.append(td2)
+
+    const td3 = document.createElement('td')
+    td3.textContent = repo.forks_count
+    tr.append(td3)
+
+
+    repoTable.append(tr)
+}
+
 //---------- Render Dashboard ----------// 
 const renderDashboard = (newGitUser) => {
     const img = gitUserDashboard.querySelector("#gituser-img")
@@ -402,7 +413,7 @@ const renderDashboard = (newGitUser) => {
     const location = gitUserDashboard.querySelector('#gituser-location')
     const hireable = gitUserDashboard.querySelector('#hireable')
     const divUserStats = gitUserDashboard.querySelector('#user-stats')
-
+    divUserStats.style = "display:block"
     const siteAdmin = divUserStats.querySelector("#user-stats > span:nth-child(1)")
     const publicRepos = divUserStats.querySelector("#user-stats > span:nth-child(2)")
     const followers = divUserStats.querySelector("#user-stats > span:nth-child(3)")
@@ -418,10 +429,13 @@ const renderDashboard = (newGitUser) => {
     profile.dataset.id = newGitUser.id
 
     siteAdmin.textContent = `Site Admin: ${newGitUser.site_admin}`
-    publicRepos.textContent = `Number of public repositories: ${newGitUser.public_repos}`
+    siteAdmin.className = "user-stats"
+    publicRepos.textContent = `Public repositories: ${newGitUser.public_repos}`
+    publicRepos.className = "user-stats"
     followers.textContent = `Followers: ${newGitUser.followers}`
+    followers.className = "user-stats"
     following.textContent = `Following: ${newGitUser.following}`
-    singleUserRepo(newGitUser.repos_url)
+    following.className = "user-stats"
 }
 
 //---------- Event Listener on Fav button ----------// 
@@ -509,7 +523,7 @@ const gitUserRepo = (newRepo) => {
     })
         .then(response => response.json())
         .then(repo => {
-            console.log(repo)
+            // console.log(repo)
             // renderARepo(repo)
         })
 }
@@ -524,16 +538,18 @@ const renderFavorites = () => {
     fetch(`${clientsBackend}/${clientInfo.dataset.username}`)
         .then(response => response.json())
         .then(client => {
-            favoriteGitusersUl.innerHTML= ""
+            favoriteGitusersUl.innerHTML = ""
             client.git_user_clients.forEach(gitUserClient => {
 
                 const li = document.createElement('li')
                 li.dataset.id = gitUserClient.id
+                li.className = "favorite-user"
+                li.dataset.gitUserid = gitUserClient.git_user_id
                 const gitUser = gitUserClient.git_user
                 li.textContent = gitUser.name
                 const deleteButton = document.createElement('button')
                 deleteButton.textContent = "Delete"
-                deleteButton.classList = "button is-success is-small"
+                deleteButton.classList = "button is-warning is-small"
                 deleteButton.id = "delete-favorite"
                 const div = document.createElement('div')
                 div.classList.add("block")
@@ -558,22 +574,38 @@ favoriteGitusersUl.addEventListener('click', event => {
         })
         li.remove()
     }
-    else if(event.target.matches('li')){
+    else if (event.target.matches('li')) {
+        console.log(event.target)
+        fetch(`${githubUserBackend}/${event.target.dataset.gitUserid}`)
+            .then(response => response.json())
+            .then(gitUser => {
+                renderDashboard(gitUser)
+                repoTableReset()
+                displayChart(gitUser)
+                gitUser.repositories.forEach(repo => {
+                    repoTableRender(repo)
+
+                })
+
+            })
 
     }
 })
 
 //---------- Chart ----------// 
-let myChart = document.getElementById('gituser-chart').getContext('2d')
-
-let languageGraph = new Chart(myChart, {
-    type:'bar',
-    data:{
-        lables:["Chicken","Beef","Salmon"],
-        datasets:[{
-            lable:"Meat",
-            data:[1,2,3]
-        }]
-    },
-    // options{}
-});
+const displayChart = (gitUser) => {
+    const keys = Object.keys(gitUser.repo_language)
+    const values = Object.values(gitUser.repo_language)
+    let myChart = document.getElementById('gituser-chart').getContext('2d')
+    let languageGraph = new Chart(myChart, {
+        type: 'pie',
+        data: {
+            lables: Array.from(keys),
+            datasets: [{
+                lable: "Languages",
+                data: Array.from(values)
+            }]
+        },
+        // options{}
+    });
+}
