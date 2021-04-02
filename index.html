@@ -8,23 +8,23 @@
     <script src="index.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
     <title>GitBook</title>
 </head>
 
-<body>
-    <header>
-        <h1>GitBook</h1>
-    </header>
-    
-    <div id="nav-bar">
-        <span id="username">Logged in as :</span>
+<body>  
+     <div id="nav-bar">
+        <header class="block">
+            <h1>GitBook</h1>
+        </header>
+        <span id="username"></span>
         <div id="client-info">
-            <span id="first-name">Client First Name</span>
-            <span id="last-name">Client Last Name</span>
-            <span id="location">Client Location</span>
+            <span id="first-name"></span>
+            <span id="last-name"></span>
+            <span id="location"></span>
         </div>
         <div id="edit-client-button-div">
-            <button id="client-button">Update Info</button>
+            <button id="client-button" style="display:none">Update Info</button>
             <form id="update-form" dir="auto" hidden>
                 <label for="firstName"></label>
                 <input type="text" name="firstName" placeholder="First Name">
@@ -88,16 +88,25 @@
             </div>
         </div>
     </div>
+<!-- 
 
-    <div id="main-page" class="columns" style="display:none">Main Page
-        <div id="favorite-gitusers" class="column">
-            <ul id="gitusers">Favorite Gituser Name
+    DASHBOARD
+
+ -->
+    <div id="main-page" style="display:block">
+        <!-- 
+            LEFT COMPONENT OF FAVORITE USER
+         -->
+        <div id="favorite-gitusers" >
+            <ul id="gitusers">Favorite Gitusers
 
             </ul>
         </div>
-        
-        <div id="search" class="column">search
-            <div id="gituser-search" hidden>
+        <!-- 
+            SEARCH
+         -->
+        <div id="search">
+            <div id="gituser-search" >
                 <form id="search-form" type="search" dir="auto" >
                     <label for="username"></label>
                     <input type="search" name="username" placeholder="Search GitHub Username">
@@ -105,16 +114,16 @@
                 </form>
             </div>
 
-            <div id="searched-github-users" class="outerDiv" hidden>
-                <table id="github-user-table" style="width:100%">
-                        <tr>
-                            <th>Picture</th>
-                            <th>Username</th>
-                            <th>Location</th>
-                            <th>Public Repos</th>
-                            <th>Hirable</th>
-                            <th>Followers</th>
-                            <th>See User Page</th>
+            <div id="searched-github-users" class="outerDiv" >
+                <table id="github-user-table" style="width:100%;">
+                        <tr id="first-row" style="display:none">
+                            <th class="first-row">Picture</th>
+                            <th class="first-row">Username</th>
+                            <th class="first-row">Location</th>
+                            <th class="first-row">Public Repos</th>
+                            <th class="first-row">Hirable</th>
+                            <th class="first-row">Followers</th>
+                            <th class="first-row">See User Page</th>
                         </tr>
                         <tr>
 
@@ -122,30 +131,33 @@
                 </table>
             </div>
         </div>
+        <!-- 
+            BABY DASHBOARD
+         -->
         <!-- style="display:none" -->
-        <div id="dashboard" class="column" style="display:none">
+        <div id="dashboard"  style="display:block">
             <div id="profile-info">
-                <div class="card">
+                <!-- <div class="card"> -->
 
-                    <div class="card-image">
-                      <figure class="image is-3by2">
+                    <!-- <div class="card-image">
+                      <figure class="image is-3by2"> -->
                         <img id="gituser-img" src="" alt="N/A">
-                      </figure>
-                    </div>
-                        <div class="card-content">
-                            <div class="content">
+                      <!-- </figure>
+                    </div> -->
+                        <!-- <div class="card-content">
+                            <div class="content"> -->
                               <h2 id="gituser-username">[Github User Username]</h2>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <div class="content">
+                            <!-- </div>
+                        </div> -->
+                        <!-- <div class="card-content">
+                            <div class="content"> -->
                                <h3 id="gituser-name">[Github User Name]</h3>
                                <p id="gituser-location">[Location]</p>
                                <p id="hireable">Looking for a job [hireable]</p>
-                            </div>
-                        </div>
+                            <!-- </div>
+                        </div> -->
                     <button class="outerDiv" id="FavoriteButton">Favorite</button>
-                </div>
+                <!-- </div> -->
             </div>
 
             <div id="user-stats">
@@ -156,11 +168,11 @@
             </div>
 
             <div id="charts">put graphs here
-
+                <canvas id="gituser-chart"></canvas>
             </div>
 
             <div id="repos-list">
-                <table id="github-user-repo-table" style="width:100%">
+                <table id="github-user-repo-table">
                     <tr>
                         <th>Name</th>
                         <th>Language</th>
@@ -168,16 +180,20 @@
                     </tr>
                 </table>
             </div>
-
         </div>
+            <!-- 
+                BABY DASHBOARD END
+             -->
     </div>
+<!-- 
+
+    DASHBOARD END
+
+ -->
 
 
-
-
-    
 </body>
-
+<!--  rgb(100, 223, 223) -->
 
 
 

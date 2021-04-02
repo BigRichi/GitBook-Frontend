@@ -52,6 +52,7 @@ const githubUserApi = "https://api.github.com/users/"
 
 //---------- Client Information Render ----------//
 const renderClient = (client) => {
+    
     clientUserName.textContent = `Logged in as : ${client.username}`
     clientInfo.dataset.id = client.id
     clientInfo.dataset.username = client.username
@@ -65,31 +66,32 @@ const renderClient = (client) => {
 loginForm.addEventListener('submit', event => {
     event.preventDefault()
     const userName = event.target.username.value
+    // debugger
 
     fetch(`${clientsBackend}/${userName}`)
-    .then(response => response.json())
-    .then(client => {
-        renderClient(client)
-        searchDiv.style ="display:block" 
-        loginDiv.style ="display:none" 
-        createDiv.style ="display:none" 
-        mainPage.style ="display:block" 
-        renderFavorites()
-    })
+        .then(response => response.json())
+        .then(client => {
+            renderClient(client)
+            searchDiv.style = "display:block"
+            loginDiv.style = "display:none"
+            createDiv.style = "display:none"
+            mainPage.style = "display:block"
+            renderFavorites()
+        })
 })
 
 
 
 //---------- Toggle Create Form Event Listener ----------//
 createButton.addEventListener('click', event => {
-    loginDiv.style ="display:none" 
-    createDiv.style ="display:block" 
+    loginDiv.style = "display:none"
+    createDiv.style = "display:block"
 })
 loginButton.addEventListener('click', event => {
-    loginDiv.style ="display:block" 
-    createDiv.style ="display:none" 
+    loginDiv.style = "display:block"
+    createDiv.style = "display:none"
 })
- 
+
 
 //---------- Create Form Event Listener ----------//
 
@@ -102,7 +104,7 @@ createForm.addEventListener('submit', event => {
         username: createForm.userName.value
     }
 
-    fetch(clientsBackend,{
+    fetch(clientsBackend, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -110,23 +112,24 @@ createForm.addEventListener('submit', event => {
         },
         body: JSON.stringify(newClient)
     })
-    .then(response => response.json())
-    .then(client => {
-        searchDiv.hidden = false
-        loginDiv.hidden = true
-        createDiv.hidden = true
-        renderClient(client)
-    })
+        .then(response => response.json())
+        .then(client => {
+            renderClient(client)
+            searchDiv.style = "display:block"
+            loginDiv.style = "display:none"
+            createDiv.style = "display:none"
+            mainPage.style = "display:block"
+        })
 })
 
 //---------- Toggle update Form Event Listener ----------//
 updateButton.addEventListener('click', event => {
-    updateForm.hidden = false 
+    updateForm.hidden = false
 })
 
 //---------- Update Form Event Listener ----------//
 updateForm.addEventListener('submit', event => {
-    if (event.target.matches('submit')){
+    if (event.target.matches('submit')) {
         event.preventDefault()
         const updatedClient = {
             first_name: event.target.firstName.value,
@@ -141,20 +144,20 @@ updateForm.addEventListener('submit', event => {
             },
             body: JSON.stringify(updatedClient)
         })
-        .then(response => response.json())
-        .then(newClientInfo => {
-            firstName.textContent = newClientInfo.first_name
-            lastName.textContent = newClientInfo.last_name 
-            location.textContent = newClientInfo.location
-        })
+            .then(response => response.json())
+            .then(newClientInfo => {
+                firstName.textContent = newClientInfo.first_name
+                lastName.textContent = newClientInfo.last_name
+                location.textContent = newClientInfo.location
+            })
     }
 })
 //---------- Search Bar Event Listener ----------//
-searchForm.addEventListener('submit', event =>{
+searchForm.addEventListener('submit', event => {
     event.preventDefault()
     const searchValue = searchForm.username.value
 
-    if (searchValue === ""){
+    if (searchValue === "") {
         //In essance this if will change the between the dashboard and the search div
         userSearchTable.hidden = true
         gitUserTable.innerHTML = ""
@@ -171,28 +174,27 @@ searchForm.addEventListener('submit', event =>{
 
 const gitUserSearch = (value) => {
     fetch(`${githubSearchApi}${value}`)
-    .then(response => response.json())
-    .then(gitUsers => {
-        gitUsers.items.forEach(gitUser => {
-            singleUser(gitUser)    
-            // console.log(gitUser)
+        .then(response => response.json())
+        .then(gitUsers => {
+            gitUsers.items.forEach(gitUser => {
+                singleUser(gitUser)
+                // console.log(gitUser)
+            })
         })
-    })
 }
 
 //---------- GitUser Table Reset ----------//
 const gituserTableReset = () => {
     gitUserTable.innerHTML = `
     <table id="github-user-table" style="width:100%">
-        <tr>
-            <th>Picture</th>
-            <th>Username</th>
-            <th>Location</th>
-            <th>Public Repos</th>
-            <th>Hirable</th>
-            <th>Followers</th>
-            <th>See User Page</th>
-            <th>Favorite</th>
+        <tr id="first-row">
+            <th class="first-row">Picture</th>
+            <th class="first-row">Username</th>
+            <th class="first-row">Location</th>
+            <th class="first-row">Public Repos</th>
+            <th class="first-row">Hirable</th>
+            <th class="first-row">Followers</th>
+            <th class="first-row">See User Page</th>
         </tr>
     </table>
     `
@@ -249,31 +251,34 @@ const singleUser = (gitUser) => {
     const userUrl = gitUser.url
     // debugger
     fetch(userUrl)
-    .then(response => response.json())
-    .then(gitUser => {
-        const githubId = gitUser.id
-        const username = gitUser.login //-for username
-        const name = gitUser.name
-        const image = gitUser.avatar_url //-for Image
-        const bio = gitUser.bio 
-        const location = gitUser.location
-        const siteAdmin = gitUser.site_admin
-        const hireable = gitUser.hireable
-        const publicRepos = gitUser.public_repos
-        const followers = gitUser.followers
-        const following = gitUser.following
-        favoriteButton.dataset.id = gitUser.reposUrl
-        tableCreation(image, username, location, publicRepos, hireable, followers)
-        // userDashboard(githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following)
+        .then(response => response.json())
+        .then(gitUser => {
+            const githubId = gitUser.id
+            const username = gitUser.login //-for username
+            const name = gitUser.name
+            const image = gitUser.avatar_url //-for Image
+            const bio = gitUser.bio
+            const location = gitUser.location
+            const siteAdmin = gitUser.site_admin
+            const hireable = gitUser.hireable
+            const publicRepos = gitUser.public_repos
+            const followers = gitUser.followers
+            const following = gitUser.following
+            favoriteButton.dataset.id = gitUser.reposUrl
 
-    })
+            tableCreation(image, username, location, publicRepos, hireable, followers)
+            // userDashboard(githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following)
+
+        })
 }
 //---------- Git User Search Table appends [8 columns] ----------//
 const tableCreation = (image, username, location, publicRepos, hireable, followers) => {
     const tr = document.createElement('tr')
+    tr.classList.add("gituser-tr")
 
     const td1 = document.createElement('td')
     const img = document.createElement('img')
+    img.classList.add("gituser-image")
     img.src = image
     img.alt = username
     td1.append(img)
@@ -302,7 +307,7 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
     const td7 = document.createElement('td')
     const userBtn = document.createElement('button')
     userBtn.textContent = 'Show Me'
-    userBtn.classList = "button is-black is-small"
+    userBtn.classList = "button is-warning is-light is-small"
     userBtn.id = 'UserButton'
     userBtn.dataset.id = username
     td7.append(userBtn)
@@ -310,84 +315,84 @@ const tableCreation = (image, username, location, publicRepos, hireable, followe
 
 
     gitUserTable.append(tr)
-    
+
 }
 
 
 //---------- Event Listener on Github User Table to add that user to the BackEnd ----------//
 // const userDashboard = (githubId, username, name, image, bio, location, siteAdmin, hireable, publicRepos, followers, following) => {
-gitUserTable.addEventListener('click', event =>{
-    if (event.target.matches('#UserButton')){
+gitUserTable.addEventListener('click', event => {
+    if (event.target.matches('#UserButton')) {
         const userName = event.target.dataset.id
         userSearchTable.hidden = true
-        gitUserDashboard.style ="display:block" 
-        
+        gitUserDashboard.style = "display:block"
+
         fetch(`${githubUserApi}${userName}`)
-        .then(response => response.json())
-        .then(gitUser => {       
-            const newUser = {
-                github_id: gitUser.id,
-                login: gitUser.login, //-for username
-                name: gitUser.name,
-                avatar_url: gitUser.avatar_url, //-for Image
-                bio: gitUser.bio, 
-                location: gitUser.location,
-                site_admin: gitUser.site_admin,
-                hireable: gitUser.hireable,
-                public_repos: gitUser.public_repos,
-                repos_url: gitUser.repos_url,
-                followers: gitUser.followers,
-                following: gitUser.following
-            }
-            // debugger
-            fetch(githubUserBackend, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(newUser)
-            })
             .then(response => response.json())
-            .then(newGitUser => {
-                renderReposTable(newGitUser.repos_url)
-                renderDashboard(newGitUser)
+            .then(gitUser => {
+                const newUser = {
+                    github_id: gitUser.id,
+                    login: gitUser.login, //-for username
+                    name: gitUser.name,
+                    avatar_url: gitUser.avatar_url, //-for Image
+                    bio: gitUser.bio,
+                    location: gitUser.location,
+                    site_admin: gitUser.site_admin,
+                    hireable: gitUser.hireable,
+                    public_repos: gitUser.public_repos,
+                    repos_url: gitUser.repos_url,
+                    followers: gitUser.followers,
+                    following: gitUser.following
+                }
+                // debugger
+                fetch(githubUserBackend, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(newUser)
+                })
+                    .then(response => response.json())
+                    .then(newGitUser => {
+                        renderReposTable(newGitUser.repos_url)
+                        renderDashboard(newGitUser)
+                    })
             })
-        })
     }
-    
+
 })
 
 //---------- Render Repos ----------// 
 const renderReposTable = (repos_api) => {
     // const sortedRepoApi = `${repos_api}?q=blog&sort=updated_at&order=desc`
     fetch(`${repos_api}?q=blog&sort=updated_at&order=desc`)
-    .then(response => response.json())
-    .then(repos => {
-        repos.forEach(repo =>{
-            const tr = document.createElement('tr')
+        .then(response => response.json())
+        .then(repos => {
+            repos.forEach(repo => {
+                const tr = document.createElement('tr')
 
-            const atag = document.createElement('a')
-            atag.href = repo.html_url
-            atag.target = "_blank"
+                const atag = document.createElement('a')
+                atag.href = repo.html_url
+                atag.target = "_blank"
 
-            const td1 = document.createElement('td')
-            td1.textContent = repo.name
-            atag.append(td1)
-            tr.append(atag)
-            
-            const td2 = document.createElement('td')
-            td2.textContent = repo.language
-            tr.append(td2)
-            
-            const td3 = document.createElement('td')
-            td3.textContent = repo.forks_count
-            tr.append(td3)
-            
-            
-            repoTable.append(tr)
+                const td1 = document.createElement('td')
+                td1.textContent = repo.name
+                atag.append(td1)
+                tr.append(atag)
+
+                const td2 = document.createElement('td')
+                td2.textContent = repo.language
+                tr.append(td2)
+
+                const td3 = document.createElement('td')
+                td3.textContent = repo.forks_count
+                tr.append(td3)
+
+
+                repoTable.append(tr)
+            })
         })
-    })
 }
 //---------- Render Dashboard ----------// 
 const renderDashboard = (newGitUser) => {
@@ -402,9 +407,9 @@ const renderDashboard = (newGitUser) => {
     const publicRepos = divUserStats.querySelector("#user-stats > span:nth-child(2)")
     const followers = divUserStats.querySelector("#user-stats > span:nth-child(3)")
     const following = divUserStats.querySelector("#user-stats > span:nth-child(4)")
-    
-    
-    
+
+
+
     img.src = newGitUser.avatar_url
     userName.textContent = newGitUser.login
     name.textContent = newGitUser.name
@@ -426,7 +431,7 @@ favoriteButton.addEventListener('click', event => {
         git_user_id: profile.dataset.id
     }
 
-    fetch(gitUserClients,{
+    fetch(gitUserClients, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -434,63 +439,63 @@ favoriteButton.addEventListener('click', event => {
         },
         body: JSON.stringify(newGitUserClient)
     })
-    .then(response => response.json())
-    .then(gitUserClient => {
-        console.log(gitUserClient)
-    })
+        .then(response => response.json())
+        .then(gitUserClient => {
+            renderFavorites()
+        })
 
 })
 
 //---------- Fetch from Github API for single Github User Repo ----------// ** Will break this out into seperate functions.
 const singleUserRepo = (reposApi) => {
     const sortedRepoApi = `${reposApi}?q=blog&sort=updated_at&order=desc`
-    
+
     fetch(sortedRepoApi)
-    .then(response => response.json())
-    .then(userRepos => {
-        userRepos.forEach(userRepo => {
-            fetch(userRepo.events_url)
-            .then(response => response.json())
-            .then(events => {
-                // array.filter(e => {return e.type === "PushEvent"})
-                // console.log(events)
-                // event.type === "PushEvent"
-                const commits = events.filter(event => {return event.type === "PushEvent"})
-                const commitsCount = commits.length
+        .then(response => response.json())
+        .then(userRepos => {
+            userRepos.forEach(userRepo => {
+                fetch(userRepo.events_url)
+                    .then(response => response.json())
+                    .then(events => {
+                        // array.filter(e => {return e.type === "PushEvent"})
+                        // console.log(events)
+                        // event.type === "PushEvent"
+                        const commits = events.filter(event => { return event.type === "PushEvent" })
+                        const commitsCount = commits.length
 
 
-                const lastCommitDate = () => {
-                    if (commitsCount > 0){
-                        return commits[0].created_at
-                    }
-                    else  {
-                        return  userRepo.created_at
-                    } 
-                }
+                        const lastCommitDate = () => {
+                            if (commitsCount > 0) {
+                                return commits[0].created_at
+                            }
+                            else {
+                                return userRepo.created_at
+                            }
+                        }
 
-                
 
-                const newRepo = {
-                    git_user_id: profile.dataset.id,
-                    name: userRepo.name,
-                    repo_id: userRepo.id,
-                    description: userRepo.description,
-                    html_url: userRepo.html_url,
-                    language: userRepo.language,
-                    size: userRepo.size,
-                    forks_count: userRepo.forks_count,
-                    commits: commitsCount,
-                    events_url: userRepo.events_url,
-                    last_commit_date: lastCommitDate(),
-                    repo_creation: userRepo.created_at
-                }
-                
-                gitUserRepo(newRepo)
-               
-            })       
+
+                        const newRepo = {
+                            git_user_id: profile.dataset.id,
+                            name: userRepo.name,
+                            repo_id: userRepo.id,
+                            description: userRepo.description,
+                            html_url: userRepo.html_url,
+                            language: userRepo.language,
+                            size: userRepo.size,
+                            forks_count: userRepo.forks_count,
+                            commits: commitsCount,
+                            events_url: userRepo.events_url,
+                            last_commit_date: lastCommitDate(),
+                            repo_creation: userRepo.created_at
+                        }
+
+                        gitUserRepo(newRepo)
+
+                    })
+            })
+
         })
-
-    })
 }
 
 const gitUserRepo = (newRepo) => {
@@ -502,41 +507,42 @@ const gitUserRepo = (newRepo) => {
         },
         body: JSON.stringify(newRepo)
     })
-    .then(response => response.json())
-    .then(repo =>{
-        console.log(repo)
-        // renderARepo(repo)
-    }) 
+        .then(response => response.json())
+        .then(repo => {
+            console.log(repo)
+            // renderARepo(repo)
+        })
 }
 
 //---------- Render repos to dashboard ----------// 
-const renderARepo = (repo) =>{
-    
-}
+// const renderARepo = (repo) => {
+
+// }
 
 //---------- Render Favorite Git Users ----------// 
 const renderFavorites = () => {
     fetch(`${clientsBackend}/${clientInfo.dataset.username}`)
-    .then(response => response.json())
-    .then(client => {
-        client.git_user_clients.forEach(gitUserClient => {
-            
-            const li = document.createElement('li')
-            li.dataset.id = gitUserClient.id
-            const gitUser = gitUserClient.git_user
-            li.textContent = gitUser.name
-            const deleteButton = document.createElement('button')
-            deleteButton.textContent = "Delete"
-            deleteButton.classList = "button is-black is-small"
-            deleteButton.id = "delete-favorite"
-            const div = document.createElement('div')
-            div.classList.add("block")
-            li.append(deleteButton)
-            div.append(li)
-            favoriteGitusersUl.append(div)
+        .then(response => response.json())
+        .then(client => {
+            favoriteGitusersUl.innerHTML= ""
+            client.git_user_clients.forEach(gitUserClient => {
 
+                const li = document.createElement('li')
+                li.dataset.id = gitUserClient.id
+                const gitUser = gitUserClient.git_user
+                li.textContent = gitUser.name
+                const deleteButton = document.createElement('button')
+                deleteButton.textContent = "Delete"
+                deleteButton.classList = "button is-success is-small"
+                deleteButton.id = "delete-favorite"
+                const div = document.createElement('div')
+                div.classList.add("block")
+                li.append(deleteButton)
+                div.append(li)
+                favoriteGitusersUl.append(div)
+
+            })
         })
-    })
 }
 
 
@@ -544,7 +550,7 @@ const renderFavorites = () => {
 //---------- Event Listener favorite gitusers list ----------// 
 favoriteGitusersUl.addEventListener('click', event => {
 
-    if(event.target.matches('#delete-favorite')){
+    if (event.target.matches('#delete-favorite')) {
         const li = event.target.closest('li')
         const id = li.dataset.id
         fetch(`${gitUserClients}/${id}`, {
@@ -552,48 +558,22 @@ favoriteGitusersUl.addEventListener('click', event => {
         })
         li.remove()
     }
+    else if(event.target.matches('li')){
+
+    }
 })
 
+//---------- Chart ----------// 
+let myChart = document.getElementById('gituser-chart').getContext('2d')
 
-
-
-
-
-
-// Parameters: {"github_id"=>4323180, 
-// "login"=>"adamwathan", 
-// "name"=>"Adam Wathan", 
-// "avatar_url"=>"https://avatars.githubusercontent.com/u/4323180?v=4", 
-// "bio"=>"Creator of Tailwind CSS, author of Refactoring UI, host of Full Stack Radio.", 
-// "location"=>"Ontario, Canada", 
-// "site_admin"=>false, 
-// "hireable"=>nil, 
-// "public_repos"=>136, 
-// "repos_url"=>"https://api.github.com/users/adamwathan/repos", 
-// "followers"=>6426, 
-// "following"=>12, 
-
-// "git_user"=>{"github_id"=>4323180, "login"=>"adamwathan", "name"=>"Adam Wathan", "avatar_url"=>"https://avatars.githubusercontent.com/u/4323180?v=4", "bio"=>"Creator of Tailwind CSS, author of Refactoring UI, host of Full Stack Radio.", "location"=>"Ontario, Canada", "site_admin"=>false, "hireable"=>nil, "public_repos"=>136, "repos_url"=>"https://api.github.com/users/adamwathan/repos", "followers"=>6426, "following"=>12}}
-
-// #<ActionController::Parameters {"github_id"=>68611902,
-//  "login"=>"jpham1109", 
-//  "name"=>"J Hoa Pham L-H",
-//   "avatar_url"=>"https://avatars.githubusercontent.com/u/68611902?v=4",
-//    "bio"=>"Future Full-stack Developer ", 
-//    "location"=>"Brooklyn, NY", 
-//    "site_admin"=>false, 
-//    "hireable"=>nil, 
-//    "public_repos"=>173, 
-//    "repos_url"=>"https://api.github.com/users/jpham1109/repos", 
-//    "followers"=>1, 
-//    "following"=>1, 
-//    "controller"=>"git_users", 
-//    "action"=>"create", 
-
-//    "git_user"=>{"github_id"=>68611902, "login"=>"jpham1109", "name"=>"J Hoa Pham L-H", "avatar_url"=>"https://avatars.githubusercontent.com/u/68611902?v=4", "bio"=>"Future Full-stack Developer ", "location"=>"Brooklyn, NY", "site_admin"=>false, "hireable"=>nil, "public_repos"=>173, "repos_url"=>"https://api.github.com/users/jpham1109/repos", "followers"=>1, "following"=>1}} permitted: false>
-// nil
-
-
-// #<ActionController::Parameters {"github_id"=>74831533, "login"=>"maxmiller413", "name"=>nil, "avatar_url"=>"https://avatars.githubusercontent.com/u/74831533?v=4", "bio"=>nil, "location"=>nil, "site_admin"=>false, "hireable"=>nil, "public_repos"=>165, "repos_url"=>"https://api.github.com/users/maxmiller413/repos", "followers"=>1, "following"=>1, "controller"=>"git_users", "action"=>"create", 
-
-// "git_user"=>{"github_id"=>74831533, "login"=>"maxmiller413", "name"=>nil, "avatar_url"=>"https://avatars.githubusercontent.com/u/74831533?v=4", "bio"=>nil, "location"=>nil, "site_admin"=>false, "hireable"=>nil, "public_repos"=>165, "repos_url"=>"https://api.github.com/users/maxmiller413/repos", "followers"=>1, "following"=>1}} permitted: false>
+let languageGraph = new Chart(myChart, {
+    type:'bar',
+    data:{
+        lables:["Chicken","Beef","Salmon"],
+        datasets:[{
+            lable:"Meat",
+            data:[1,2,3]
+        }]
+    },
+    // options{}
+});
